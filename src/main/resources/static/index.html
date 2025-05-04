@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Médicaments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body { padding: 20px; }
+        .form-container { max-width: 800px; margin: 0 auto; }
+        .table-container { margin-top: 30px; }
+        .form-section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .form-section h5 { color: #0d6efd; }
+        .search-container { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center mb-4">Gestion des Médicaments</h1>
+
+    <!-- Formulaire d'ajout/modification -->
+    <div class="form-container card p-4">
+        <h2 id="form-title">Ajouter un Médicament</h2>
+        <form id="medicament-form">
+            <input type="hidden" id="medicament-id">
+
+            <div class="form-section">
+                <h5>Informations de base</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="code-barre" class="form-label">Code barre</label>
+                        <input type="text" class="form-control" id="code-barre">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nom" class="form-label">Nom commercial*</label>
+                        <input type="text" class="form-control" id="nom" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="dci" class="form-label">DCI</label>
+                        <input type="text" class="form-control" id="dci">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="laboratoire" class="form-label">Laboratoire</label>
+                        <input type="text" class="form-control" id="laboratoire">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h5>Caractéristiques</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="dosage" class="form-label">Dosage</label>
+                        <input type="text" class="form-control" id="dosage">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="forme-galenique" class="form-label">Forme galénique</label>
+                        <select class="form-select" id="forme-galenique">
+                            <option value="">Sélectionner</option>
+                            <option value="Comprimé">Comprimé</option>
+                            <option value="Gélule">Gélule</option>
+                            <option value="Sirop">Sirop</option>
+                            <option value="Injectable">Injectable</option>
+                            <option value="Crème">Crème</option>
+                            <option value="Pommade">Pommade</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="classe-therapeutique" class="form-label">Classe thérapeutique</label>
+                        <input type="text" class="form-control" id="classe-therapeutique">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h5>Prix et stock</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="prix-achat" class="form-label">Prix d'achat*</label>
+                        <input type="number" step="0.01" class="form-control" id="prix-achat" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="prix-vente" class="form-label">Prix de vente*</label>
+                        <input type="number" step="0.01" class="form-control" id="prix-vente" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="taux-remboursement" class="form-label">Taux remboursement (%)</label>
+                        <input type="number" step="0.01" class="form-control" id="taux-remboursement" value="0">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="quantite-stock" class="form-label">Quantité en stock*</label>
+                        <input type="number" class="form-control" id="quantite-stock" required value="0">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="seuil-alerte" class="form-label">Seuil d'alerte</label>
+                        <input type="number" class="form-control" id="seuil-alerte" value="10">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h5>Autres informations</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="date-peremption" class="form-label">Date de péremption</label>
+                        <input type="date" class="form-control" id="date-peremption">
+                    </div>
+                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="prescription-requise">
+                            <label class="form-check-label" for="prescription-requise">
+                                Prescription requise
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" id="cancel-btn" class="btn btn-secondary me-md-2" style="display:none;">Annuler</button>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des médicaments -->
+    <div class="table-container">
+        <div class="search-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="search-input" class="form-control" placeholder="Rechercher par nom...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="searchMedicaments()">
+                            <i class="bi bi-search"></i> Rechercher
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Liste des Médicaments</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>DCI</th>
+                    <th>Forme</th>
+                    <th>Prix Vente</th>
+                    <th>Stock</th>
+                    <th>Péremption</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="medicaments-table">
+                <!-- Les données seront ajoutées dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('medicament-form');
+        const cancelBtn = document.getElementById('cancel-btn');
+        let isEditing = false;
+        let currentEditId = null;
+
+        // Charger les médicaments au démarrage
+        loadMedicaments();
+
+        // Gestion de la soumission du formulaire
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const medicament = {
+                codeBarre: document.getElementById('code-barre').value,
+                nom: document.getElementById('nom').value,
+                dci: document.getElementById('dci').value,
+                dosage: document.getElementById('dosage').value,
+                formeGalenique: document.getElementById('forme-galenique').value,
+                classeTherapeutique: document.getElementById('classe-therapeutique').value,
+                laboratoire: document.getElementById('laboratoire').value,
+                prixAchat: parseFloat(document.getElementById('prix-achat').value),
+                prixVente: parseFloat(document.getElementById('prix-vente').value),
+                tauxRemboursement: parseFloat(document.getElementById('taux-remboursement').value),
+                quantiteStock: parseInt(document.getElementById('quantite-stock').value),
+                seuilAlerte: parseInt(document.getElementById('seuil-alerte').value),
+                datePeremption: document.getElementById('date-peremption').value,
+                prescriptionRequise: document.getElementById('prescription-requise').checked
+            };
+
+            if (isEditing) {
+                medicament.id = currentEditId;
+                updateMedicament(medicament);
+            } else {
+                addMedicament(medicament);
+            }
+        });
+
+        // Gestion de l'annulation de l'édition
+        cancelBtn.addEventListener('click', function() {
+            resetForm();
+        });
+
+        // Fonction pour charger les médicaments
+        function loadMedicaments(searchTerm = '') {
+            const url = searchTerm ? `/api/medicaments/search?nom=${encodeURIComponent(searchTerm)}` : '/api/medicaments';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updateMedicamentsTable(data);
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors du chargement des médicaments');
+                });
+        }
+
+        // Fonction pour mettre à jour le tableau des médicaments
+        function updateMedicamentsTable(medicaments) {
+            const tableBody = document.getElementById('medicaments-table');
+
+            if (!tableBody) {
+                console.error("L'élément 'medicaments-table' n'existe pas");
+                return;
+            }
+
+            tableBody.innerHTML = medicaments.map(med => `
+            <tr>
+                <td>${med.codeBarre || '-'}</td>
+                <td>${med.nom}</td>
+                <td>${med.dci || '-'}</td>
+                <td>${med.formeGalenique || '-'}</td>
+                <td>${med.prixVente.toFixed(2)} €</td>
+                <td class="${med.quantiteStock <= med.seuilAlerte ? 'text-danger fw-bold' : ''}">
+                    ${med.quantiteStock}
+                    ${med.quantiteStock <= med.seuilAlerte ? ' (Alerte)' : ''}
+                </td>
+                <td>${med.datePeremption ? formatDate(med.datePeremption) : '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${med.id}">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    editMedicament(this.getAttribute('data-id'));
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    deleteMedicament(this.getAttribute('data-id'));
+                });
+            });
+        }
+
+        // Fonction pour formater la date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        }
+
+        // Fonction pour ajouter un médicament
+        function addMedicament(medicament) {
+            fetch('/api/medicaments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(medicament)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.message || 'Erreur inconnue'); });
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    resetForm();
+                    loadMedicaments();
+                    alert('Médicament ajouté avec succès!');
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Erreur lors de l\'ajout du médicament');
+                });
+        }
+
+        // Fonction pour mettre à jour un médicament
+        function updateMedicament(medicament) {
+            fetch(`/api/medicaments/${medicament.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(medicament)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la mise à jour');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    resetForm();
+                    loadMedicaments();
+                    alert('Médicament mis à jour avec succès!');
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Erreur lors de la mise à jour du médicament');
+                });
+        }
+
+        // Fonction pour supprimer un médicament
+        function deleteMedicament(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce médicament?')) {
+                fetch(`/api/medicaments/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la suppression');
+                        }
+                        loadMedicaments();
+                        alert('Médicament supprimé avec succès!');
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert(error.message || 'Erreur lors de la suppression du médicament');
+                    });
+            }
+        }
+
+        // Fonction pour éditer un médicament
+        function editMedicament(id) {
+            fetch(`/api/medicaments/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Médicament non trouvé');
+                    }
+                    return response.json();
+                })
+                .then(medicament => {
+                    document.getElementById('medicament-id').value = medicament.id;
+                    document.getElementById('code-barre').value = medicament.codeBarre || '';
+                    document.getElementById('nom').value = medicament.nom;
+                    document.getElementById('dci').value = medicament.dci || '';
+                    document.getElementById('dosage').value = medicament.dosage || '';
+                    document.getElementById('forme-galenique').value = medicament.formeGalenique || '';
+                    document.getElementById('classe-therapeutique').value = medicament.classeTherapeutique || '';
+                    document.getElementById('laboratoire').value = medicament.laboratoire || '';
+                    document.getElementById('prix-achat').value = medicament.prixAchat;
+                    document.getElementById('prix-vente').value = medicament.prixVente;
+                    document.getElementById('taux-remboursement').value = medicament.tauxRemboursement;
+                    document.getElementById('quantite-stock').value = medicament.quantiteStock;
+                    document.getElementById('seuil-alerte').value = medicament.seuilAlerte;
+                    document.getElementById('date-peremption').value = medicament.datePeremption ? medicament.datePeremption.split('T')[0] : '';
+                    document.getElementById('prescription-requise').checked = medicament.prescriptionRequise;
+
+                    document.getElementById('form-title').textContent = 'Modifier Médicament';
+                    cancelBtn.style.display = 'inline-block';
+                    isEditing = true;
+                    currentEditId = medicament.id;
+
+                    // Scroll to form
+                    document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Erreur lors du chargement du médicament');
+                });
+        }
+
+        // Fonction pour réinitialiser le formulaire
+        function resetForm() {
+            form.reset();
+            document.getElementById('form-title').textContent = 'Ajouter un Médicament';
+            cancelBtn.style.display = 'none';
+            isEditing = false;
+            currentEditId = null;
+            document.getElementById('taux-remboursement').value = '0';
+            document.getElementById('quantite-stock').value = '0';
+            document.getElementById('seuil-alerte').value = '10';
+        }
+
+        // Fonction de recherche exposée globalement
+        window.searchMedicaments = function() {
+            const searchTerm = document.getElementById('search-input').value;
+            loadMedicaments(searchTerm);
+        };
+    });
+</script>
+</body>
+</html>
