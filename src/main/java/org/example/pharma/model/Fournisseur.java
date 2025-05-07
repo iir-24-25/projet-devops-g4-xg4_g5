@@ -37,8 +37,6 @@ public class Fournisseur {
     private Date updatedAt;
 
 
-    @OneToMany(mappedBy = "fournisseur")
-    private List<Achat> achats;
 
 
 }

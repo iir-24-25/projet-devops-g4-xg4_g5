@@ -495,6 +495,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Éléments du DOM
         const fournisseurForm = document.getElementById('fournisseurForm');
         const fournisseursTableBody = document.getElementById('fournisseursTableBody');
         const formTitle = document.getElementById('formTitle');
@@ -511,6 +512,7 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const totalCount = document.getElementById('totalCount');
 
+        // Variables d'état
         let isEditMode = false;
         let currentFournisseurId = null;
         let currentPage = 1;
@@ -519,38 +521,136 @@
         let currentSortDirection = 'asc';
         let currentSize = 10;
 
-        // Afficher/masquer le formulaire
-        function toggleForm(show) {
-            if (show) {
-                formSection.classList.add('show');
-                document.documentElement.scrollTo({
-                    top: formSection.offsetTop - 20,
-                    behavior: 'smooth'
+        // Initialisation
+        initEventListeners();
+        loadFournisseurs();
+
+        function initEventListeners() {
+            // Gestion du formulaire
+            addFournisseurBtn.addEventListener('click', () => toggleForm(true));
+            mobileAddBtn.addEventListener('click', () => toggleForm(true));
+            closeFormBtn.addEventListener('click', () => toggleForm(false));
+            cancelEditBtn.addEventListener('click', cancelEdit);
+            fournisseurForm.addEventListener('submit', handleFormSubmit);
+
+            // Recherche et tri
+            searchButton.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSearch();
+            });
+            sortField.addEventListener('change', () => {
+                currentSortField = sortField.value;
+                loadFournisseurs();
+            });
+            sortDirection.addEventListener('change', () => {
+                currentSortDirection = sortDirection.value;
+                loadFournisseurs();
+            });
+            pageSize.addEventListener('change', () => {
+                currentSize = parseInt(pageSize.value);
+                currentPage = 1;
+                loadFournisseurs();
+            });
+        }
+
+        // Fonctions principales
+        async function loadFournisseurs() {
+            try {
+                showLoadingState();
+
+                const url = buildApiUrl();
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
-            } else {
-                formSection.classList.remove('show');
-                resetForm();
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Réponse API invalide');
+                }
+
+                if (!data.content || !Array.isArray(data.content)) {
+                    throw new Error('Structure de données inattendue');
+                }
+
+                renderFournisseurs(data);
+                updatePagination(data);
+                updateTotalCount(data.totalElements);
+            } catch (error) {
+                console.error('Erreur:', error);
+                showErrorState(error.message);
+                showAlert(`Erreur: ${error.message}`, 'danger');
             }
         }
 
-        // Événements pour les boutons du formulaire
-        addFournisseurBtn.addEventListener('click', function() {
-            toggleForm(true);
-        });
+        function buildApiUrl() {
+            const baseUrl = 'http://localhost:8080/api/fournisseurs';
+            const params = new URLSearchParams({
+                page: currentPage,
+                size: currentSize,
+                sortField: currentSortField,
+                sortDirection: currentSortDirection
+            });
 
-        mobileAddBtn.addEventListener('click', function() {
-            toggleForm(true);
-        });
+            if (currentSearchTerm) {
+                return `${baseUrl}/search?searchTerm=${encodeURIComponent(currentSearchTerm)}&${params.toString()}`;
+            }
+            return `${baseUrl}?${params.toString()}`;
+        }
 
-        closeFormBtn.addEventListener('click', function() {
-            toggleForm(false);
-        });
+        function renderFournisseurs(data) {
+            fournisseursTableBody.innerHTML = '';
 
-        // Charger les fournisseurs au démarrage
-        loadFournisseurs();
+            if (data.content.length === 0) {
+                showNoResultsState();
+                return;
+            }
 
-        // Gérer la soumission du formulaire
-        fournisseurForm.addEventListener('submit', function(e) {
+            data.content.forEach(fournisseur => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="badge bg-light text-dark">#${fournisseur.id}</span></td>
+                    <td class="fw-medium">${fournisseur.nom}</td>
+                    <td>${fournisseur.email || '<span class="text-muted">Non spécifié</span>'}</td>
+                    <td>${fournisseur.telephone || '<span class="text-muted">Non spécifié</span>'}</td>
+                    <td>${fournisseur.adresse || '<span class="text-muted">Non spécifié</span>'}</td>
+                    <td>${formatProduitsFournis(fournisseur.produitsFournis)}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-primary edit-btn" data-id="${fournisseur.id}" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${fournisseur.id}" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                fournisseursTableBody.appendChild(row);
+            });
+
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => editFournisseur(btn.getAttribute('data-id')));
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => confirmDelete(btn.getAttribute('data-id')));
+            });
+        }
+
+        function formatProduitsFournis(produits) {
+            if (!produits) return '<span class="text-muted">Aucun</span>';
+            return produits.substring(0, 30) + (produits.length > 30 ? '...' : '');
+        }
+
+        async function handleFormSubmit(e) {
             e.preventDefault();
 
             const fournisseur = {
@@ -561,321 +661,114 @@
                 produitsFournis: document.getElementById('produits_fournis').value
             };
 
-            if (isEditMode) {
-                updateFournisseur(currentFournisseurId, fournisseur);
-            } else {
-                createFournisseur(fournisseur);
-            }
-        });
+            try {
+                if (isEditMode) {
+                    await updateFournisseur(currentFournisseurId, fournisseur);
+                    showAlert('Fournisseur mis à jour avec succès!', 'success');
+                } else {
+                    await createFournisseur(fournisseur);
+                    showAlert('Fournisseur créé avec succès!', 'success');
+                }
 
-        // Écouteurs pour la recherche, le tri et la pagination
-        searchButton.addEventListener('click', function() {
-            currentSearchTerm = searchInput.value;
-            currentPage = 1;
-            loadFournisseurs();
-        });
-
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                currentSearchTerm = searchInput.value;
+                resetForm();
+                toggleForm(false);
                 currentPage = 1;
                 loadFournisseurs();
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert(`Erreur: ${error.message}`, 'danger');
             }
-        });
-
-        sortField.addEventListener('change', function() {
-            currentSortField = this.value;
-            loadFournisseurs();
-        });
-
-        sortDirection.addEventListener('change', function() {
-            currentSortDirection = this.value;
-            loadFournisseurs();
-        });
-
-        pageSize.addEventListener('change', function() {
-            currentSize = parseInt(this.value);
-            currentPage = 1;
-            loadFournisseurs();
-        });
-
-        // Fonction pour charger les fournisseurs avec pagination
-        function loadFournisseurs() {
-            let url;
-            if (currentSearchTerm) {
-                url = `http://localhost:8080/api/fournisseurs/search?searchTerm=${currentSearchTerm}&page=${currentPage}&size=${currentSize}&sortField=${currentSortField}&sortDirection=${currentSortDirection}`;
-            } else {
-                url = `http://localhost:8080/api/fournisseurs?page=${currentPage}&size=${currentSize}&sortField=${currentSortField}&sortDirection=${currentSortDirection}`;
-            }
-
-            // Afficher le loader
-            fournisseursTableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Chargement...</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    fournisseursTableBody.innerHTML = '';
-
-                    if (data.content.length === 0) {
-                        fournisseursTableBody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
-                                    <i class="bi bi-exclamation-circle fs-1"></i>
-                                    <p class="mt-3 mb-0">Aucun fournisseur trouvé</p>
-                                </td>
-                            </tr>
-                        `;
-                        return;
-                    }
-
-                    data.content.forEach(fournisseur => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                        <td><span class="badge bg-light text-dark">#${fournisseur.id}</span></td>
-                        <td class="fw-medium">${fournisseur.nom}</td>
-                        <td>${fournisseur.email || '<span class="text-muted">Non spécifié</span>'}</td>
-                        <td>${fournisseur.telephone || '<span class="text-muted">Non spécifié</span>'}</td>
-                        <td>${fournisseur.adresse || '<span class="text-muted">Non spécifié</span>'}</td>
-                        <td>${fournisseur.produitsFournis ? fournisseur.produitsFournis.substring(0, 30) + (fournisseur.produitsFournis.length > 30 ? '...' : '') : '<span class="text-muted">Aucun</span>'}</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-primary edit-btn" data-id="${fournisseur.id}" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${fournisseur.id}" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                        fournisseursTableBody.appendChild(row);
-                    });
-
-                    // Mettre à jour le compteur total
-                    totalCount.textContent = `${data.totalElements} fournisseur${data.totalElements !== 1 ? 's' : ''}`;
-
-                    // Mettre à jour la pagination
-                    updatePagination(data);
-
-                    // Ajouter les événements aux boutons
-                    document.querySelectorAll('.edit-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            editFournisseur(this.getAttribute('data-id'));
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            deleteFournisseur(this.getAttribute('data-id'));
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    fournisseursTableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center py-5 text-danger">
-                                <i class="bi bi-exclamation-triangle fs-1"></i>
-                                <p class="mt-3 mb-0">Erreur lors du chargement des données</p>
-                            </td>
-                        </tr>
-                    `;
-                    showAlert('Erreur lors du chargement des fournisseurs', 'danger');
-                });
         }
 
-        // Fonction pour mettre à jour la pagination
-        function updatePagination(pageData) {
-            pagination.innerHTML = '';
-
-            // Bouton Précédent
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${pageData.first ? 'disabled' : ''}`;
-            prevLi.innerHTML = `
-                <a class="page-link" href="#" aria-label="Previous">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            `;
-            prevLi.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!pageData.first) {
-                    currentPage--;
-                    loadFournisseurs();
-                }
-            });
-            pagination.appendChild(prevLi);
-
-            // Numéros de page
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(pageData.totalPages, currentPage + 2);
-
-            // Première page
-            if (startPage > 1) {
-                const firstLi = document.createElement('li');
-                firstLi.className = 'page-item';
-                firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
-                firstLi.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentPage = 1;
-                    loadFournisseurs();
-                });
-                pagination.appendChild(firstLi);
-
-                if (startPage > 2) {
-                    const ellipsisLi = document.createElement('li');
-                    ellipsisLi.className = 'page-item disabled';
-                    ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisLi);
-                }
-            }
-
-            // Pages centrales
-            for (let i = startPage; i <= endPage; i++) {
-                const pageLi = document.createElement('li');
-                pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                pageLi.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentPage = i;
-                    loadFournisseurs();
-                });
-                pagination.appendChild(pageLi);
-            }
-
-            // Dernière page
-            if (endPage < pageData.totalPages) {
-                if (endPage < pageData.totalPages - 1) {
-                    const ellipsisLi = document.createElement('li');
-                    ellipsisLi.className = 'page-item disabled';
-                    ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisLi);
-                }
-
-                const lastLi = document.createElement('li');
-                lastLi.className = 'page-item';
-                lastLi.innerHTML = `<a class="page-link" href="#">${pageData.totalPages}</a>`;
-                lastLi.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentPage = pageData.totalPages;
-                    loadFournisseurs();
-                });
-                pagination.appendChild(lastLi);
-            }
-
-            // Bouton Suivant
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${pageData.last ? 'disabled' : ''}`;
-            nextLi.innerHTML = `
-                <a class="page-link" href="#" aria-label="Next">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            `;
-            nextLi.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!pageData.last) {
-                    currentPage++;
-                    loadFournisseurs();
-                }
-            });
-            pagination.appendChild(nextLi);
-        }
-
-        // Fonction pour créer un fournisseur
-        function createFournisseur(fournisseur) {
-            fetch('http://localhost:8080/api/fournisseurs', {
+        async function createFournisseur(fournisseur) {
+            const response = await fetch('http://localhost:8080/api/fournisseurs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(fournisseur)
-            })
-                .then(response => response.json())
-                .then(() => {
-                    resetForm();
-                    currentPage = 1;
-                    loadFournisseurs();
-                    toggleForm(false);
-                    showAlert('Fournisseur créé avec succès!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    showAlert('Erreur lors de la création du fournisseur', 'danger');
-                });
+            });
+
+            if (!response.ok) {
+                throw new Error('Échec de la création du fournisseur');
+            }
         }
 
-        // Fonction pour mettre à jour un fournisseur
-        function updateFournisseur(id, fournisseur) {
-            fetch(`http://localhost:8080/api/fournisseurs/${id}`, {
+        async function updateFournisseur(id, fournisseur) {
+            const response = await fetch(`http://localhost:8080/api/fournisseurs/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(fournisseur)
-            })
-                .then(response => response.json())
-                .then(() => {
-                    resetForm();
-                    loadFournisseurs();
-                    toggleForm(false);
-                    showAlert('Fournisseur mis à jour avec succès!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    showAlert('Erreur lors de la mise à jour du fournisseur', 'danger');
-                });
-        }
+            });
 
-        // Fonction pour éditer un fournisseur
-        function editFournisseur(id) {
-            fetch(`http://localhost:8080/api/fournisseurs/${id}`)
-                .then(response => response.json())
-                .then(fournisseur => {
-                    document.getElementById('fournisseurId').value = fournisseur.id;
-                    document.getElementById('nom').value = fournisseur.nom;
-                    document.getElementById('email').value = fournisseur.email || '';
-                    document.getElementById('telephone').value = fournisseur.telephone || '';
-                    document.getElementById('adresse').value = fournisseur.adresse || '';
-                    document.getElementById('produits_fournis').value = fournisseur.produitsFournis || '';
-
-                    formTitle.innerHTML = `<i class="bi bi-pencil-fill me-2"></i>Modifier Fournisseur`;
-                    isEditMode = true;
-                    currentFournisseurId = id;
-                    cancelEditBtn.style.display = 'block';
-                    toggleForm(true);
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    showAlert('Erreur lors du chargement du fournisseur', 'danger');
-                });
-        }
-
-        // Fonction pour supprimer un fournisseur
-        function deleteFournisseur(id) {
-            // Utilisation de SweetAlert pour une meilleure UX
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur?')) {
-                fetch(`http://localhost:8080/api/fournisseurs/${id}`, {
-                    method: 'DELETE'
-                })
-                    .then(() => {
-                        loadFournisseurs();
-                        showAlert('Fournisseur supprimé avec succès!', 'success');
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        showAlert('Erreur lors de la suppression du fournisseur', 'danger');
-                    });
+            if (!response.ok) {
+                throw new Error('Échec de la mise à jour du fournisseur');
             }
         }
 
-        // Fonction pour réinitialiser le formulaire
+        async function editFournisseur(id) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/fournisseurs/${id}`);
+
+                if (!response.ok) {
+                    throw new Error('Échec du chargement du fournisseur');
+                }
+
+                const fournisseur = await response.json();
+
+                document.getElementById('fournisseurId').value = fournisseur.id;
+                document.getElementById('nom').value = fournisseur.nom;
+                document.getElementById('email').value = fournisseur.email || '';
+                document.getElementById('telephone').value = fournisseur.telephone || '';
+                document.getElementById('adresse').value = fournisseur.adresse || '';
+                document.getElementById('produits_fournis').value = fournisseur.produitsFournis || '';
+
+                formTitle.innerHTML = `<i class="bi bi-pencil-fill me-2"></i>Modifier Fournisseur`;
+                isEditMode = true;
+                currentFournisseurId = id;
+                cancelEditBtn.style.display = 'block';
+                toggleForm(true);
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert(`Erreur: ${error.message}`, 'danger');
+            }
+        }
+
+        async function confirmDelete(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur?')) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/fournisseurs/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Échec de la suppression');
+                    }
+
+                    loadFournisseurs();
+                    showAlert('Fournisseur supprimé avec succès!', 'success');
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    showAlert(`Erreur: ${error.message}`, 'danger');
+                }
+            }
+        }
+
+        // Fonctions d'interface utilisateur
+        function toggleForm(show) {
+            formSection.classList.toggle('show', show);
+            if (show) {
+                document.documentElement.scrollTo({
+                    top: formSection.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            } else {
+                resetForm();
+            }
+        }
+
         function resetForm() {
             fournisseurForm.reset();
             document.getElementById('fournisseurId').value = '';
@@ -885,13 +778,142 @@
             cancelEditBtn.style.display = 'none';
         }
 
-        // Fonction pour afficher des alertes
-        function showAlert(message, type) {
-            // Supprimer les alertes existantes
-            const existingAlert = document.querySelector('.alert');
-            if (existingAlert) {
-                existingAlert.remove();
+        function cancelEdit() {
+            resetForm();
+            toggleForm(false);
+        }
+
+        function handleSearch() {
+            currentSearchTerm = searchInput.value.trim();
+            currentPage = 1;
+            loadFournisseurs();
+        }
+
+        function showLoadingState() {
+            fournisseursTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function showNoResultsState() {
+            fournisseursTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-exclamation-circle fs-1"></i>
+                        <p class="mt-3 mb-0">Aucun fournisseur trouvé</p>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function showErrorState(message = '') {
+            fournisseursTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-danger">
+                        <i class="bi bi-exclamation-triangle fs-1"></i>
+                        <p class="mt-3 mb-0">Erreur lors du chargement des données</p>
+                        ${message ? `<small class="d-block mt-2">${message}</small>` : ''}
+                    </td>
+                </tr>
+            `;
+        }
+
+        function updatePagination(pageData) {
+            pagination.innerHTML = '';
+
+            if (!pageData || pageData.totalPages <= 1) return;
+
+            // Bouton Précédent
+            addPaginationItem({
+                content: '<i class="bi bi-chevron-left"></i>',
+                disabled: pageData.first,
+                onClick: () => { if (!pageData.first) { currentPage--; loadFournisseurs(); } },
+                ariaLabel: 'Previous'
+            });
+
+            // Numéros de page
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(pageData.totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                addPaginationItem({
+                    content: '1',
+                    onClick: () => { currentPage = 1; loadFournisseurs(); }
+                });
+
+                if (startPage > 2) {
+                    addPaginationItem({
+                        content: '...',
+                        disabled: true
+                    });
+                }
             }
+
+            for (let i = startPage; i <= endPage; i++) {
+                addPaginationItem({
+                    content: i.toString(),
+                    active: i === currentPage,
+                    onClick: () => { currentPage = i; loadFournisseurs(); }
+                });
+            }
+
+            if (endPage < pageData.totalPages) {
+                if (endPage < pageData.totalPages - 1) {
+                    addPaginationItem({
+                        content: '...',
+                        disabled: true
+                    });
+                }
+
+                addPaginationItem({
+                    content: pageData.totalPages.toString(),
+                    onClick: () => { currentPage = pageData.totalPages; loadFournisseurs(); }
+                });
+            }
+
+            // Bouton Suivant
+            addPaginationItem({
+                content: '<i class="bi bi-chevron-right"></i>',
+                disabled: pageData.last,
+                onClick: () => { if (!pageData.last) { currentPage++; loadFournisseurs(); } },
+                ariaLabel: 'Next'
+            });
+        }
+
+        function addPaginationItem({ content, active = false, disabled = false, onClick, ariaLabel }) {
+            const li = document.createElement('li');
+            li.className = `page-item ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
+
+            const a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.innerHTML = content;
+            if (ariaLabel) a.setAttribute('aria-label', ariaLabel);
+
+            if (!disabled && onClick) {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    onClick();
+                });
+            }
+
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+
+        function updateTotalCount(count) {
+            totalCount.textContent = `${count} fournisseur${count !== 1 ? 's' : ''}`;
+        }
+
+        function showAlert(message, type) {
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) existingAlert.remove();
 
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
@@ -905,21 +927,12 @@
                 </div>
             `;
 
-            // Ajouter l'alerte en haut de la page
             document.body.appendChild(alertDiv);
 
-            // Supprimer automatiquement après 5 secondes
             setTimeout(() => {
                 alertDiv.remove();
             }, 5000);
         }
-
-        // Événement pour annuler l'édition
-        cancelEditBtn.addEventListener('click', function() {
-            resetForm();
-            toggleForm(false);
-        });
     });
-</script>
-</body>
+</script></body>
 </html>
