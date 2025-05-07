@@ -16,16 +16,19 @@ public class Fournisseur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String nom;
 
+    @Column(columnDefinition = "TEXT")
     private String adresse;
+
+    @Column(length = 20)
     private String telephone;
+
+    @Column(length = 100)
     private String email;
 
-
-    @Column(name = "produits_fournis")
+    @Column(name = "produits_fournis", columnDefinition = "TEXT")
     private String produitsFournis;
 
     @CreationTimestamp
@@ -35,8 +38,6 @@ public class Fournisseur {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
-
-
 
 
 }

@@ -49,4 +49,15 @@ public class FournisseurServiceImpl implements FournisseurService {
     public void deleteFournisseur(Long id) {
         fournisseurRepository.deleteById(id);
     }
+
+    @Override
+    public List<Fournisseur> findAllFournisseurs() {
+        return fournisseurRepository.findAll();
+    }
+
+    @Override
+    public Fournisseur findFournisseurById(Long id) {
+        return fournisseurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fournisseur non trouvé avec l'ID: " + id));
+    }
 }

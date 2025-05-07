@@ -11,4 +11,6 @@ public interface FournisseurService {
     Fournisseur getFournisseurById(Long id);
     Fournisseur saveOrUpdateFournisseur(Fournisseur fournisseur);
     void deleteFournisseur(Long id);
+    List<Fournisseur> findAllFournisseurs();
+    Fournisseur findFournisseurById(Long id);
 }
