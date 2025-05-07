@@ -178,20 +178,26 @@
         <h3>PharmaGest</h3>
     </div>
     <ul class="sidebar-menu">
-        <li class="active" onclick="showSection('medicaments')">
-            <a href="#"><i class="bi bi-capsule"></i> Gérer les médicaments</a>
-        </li>
+
         <li onclick="showSection('dashboard')">
             <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
         </li>
+
+        <li class="active" onclick="showSection('medicaments')">
+            <a href="#"><i class="bi bi-capsule"></i> Gérer les médicaments</a>
+        </li>
+        <li onclick="window.location.href='frs.html'">
+            <a href="#"><i class="bi bi-people"></i> Gérer les fournisseurs</a>
+        </li>
+
         <li onclick="showSection('statistiques')">
             <a href="#"><i class="bi bi-graph-up"></i> Statistiques</a>
         </li>
         <li onclick="window.location.href='user.html'">
             <a href="#"><i class="bi bi-people"></i> Gérer les utilisateurs</a>
         </li>
-        <li onclick="showSection('inventaire')">
-            <a href="#"><i class="bi bi-box-seam"></i> Inventaire</a>
+        <li onclick="window.location.href='ventes.html'">
+            <a href="#"><i class="bi bi-box-seam"></i> Gérer les Ventes</a>
         </li>
         <li onclick="showSection('parametres')">
             <a href="#"><i class="bi bi-gear"></i> Paramètres</a>
@@ -212,6 +218,9 @@
                 <button id="add-medicament-btn" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Ajouter un médicament
                 </button>
+
+
+
             </div>
 
             <!-- Formulaire d'ajout/modification -->
@@ -465,8 +474,7 @@
 
     <div id="inventaire-section" style="display: none;">
         <div class="container-fluid">
-            <h1>Inventaire</h1>
-            <p>Section en construction...</p>
+            <h1>gerer les ventes </h1>
         </div>
     </div>
 
@@ -693,10 +701,10 @@
             const prevItem = document.createElement('li');
             prevItem.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
             prevItem.innerHTML = `
-                    <a class="page-link" href="#" aria-label="Previous" onclick="changePage(${currentPage - 1})">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                `;
+ <a class="page-link" href="#" aria-label="Previous" onclick="changePage(${currentPage - 1})">
+ <span aria-hidden="true">&laquo;</span>
+ </a>
+ `;
             pagination.appendChild(prevItem);
 
             // Numéros de page
@@ -751,10 +759,10 @@
             const nextItem = document.createElement('li');
             nextItem.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
             nextItem.innerHTML = `
-                    <a class="page-link" href="#" aria-label="Next" onclick="changePage(${currentPage + 1})">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                `;
+ <a class="page-link" href="#" aria-label="Next" onclick="changePage(${currentPage + 1})">
+ <span aria-hidden="true">&raquo;</span>
+ </a>
+ `;
             pagination.appendChild(nextItem);
         }
 
@@ -776,30 +784,30 @@
             }
 
             tableBody.innerHTML = medicaments.map(med => `
-                    <tr>
-                        <td>${med.codeBarre || '-'}</td>
-                        <td>${med.nom}</td>
-                        <td>${med.dci || '-'}</td>
-                        <td>${med.formeGalenique || '-'}</td>
-                        <td>${med.prixVente.toFixed(2)} €</td>
-                        <td class="${med.quantiteStock <= med.seuilAlerte ? 'text-danger fw-bold' : ''}">
-                            ${med.quantiteStock}
-                            ${med.quantiteStock <= med.seuilAlerte ? ' (Alerte)' : ''}
-                        </td>
-                        <td class="${isExpiringSoon(med.datePeremption) ? 'text-warning fw-bold' : ''}">
-                            ${med.datePeremption ? formatDate(med.datePeremption) : '-'}
-                            ${isExpiringSoon(med.datePeremption) ? ' (Péremption proche)' : ''}
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
-                                <i class="bi bi-pencil"></i> Modifier
-                            </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${med.id}">
-                                <i class="bi bi-trash"></i> Supprimer
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+ <tr>
+ <td>${med.codeBarre || '-'}</td>
+ <td>${med.nom}</td>
+ <td>${med.dci || '-'}</td>
+ <td>${med.formeGalenique || '-'}</td>
+ <td>${med.prixVente.toFixed(2)} €</td>
+ <td class="${med.quantiteStock <= med.seuilAlerte ? 'text-danger fw-bold' : ''}">
+ ${med.quantiteStock}
+ ${med.quantiteStock <= med.seuilAlerte ? ' (Alerte)' : ''}
+ </td>
+ <td class="${isExpiringSoon(med.datePeremption) ? 'text-warning fw-bold' : ''}">
+ ${med.datePeremption ? formatDate(med.datePeremption) : '-'}
+ ${isExpiringSoon(med.datePeremption) ? ' (Péremption proche)' : ''}
+ </td>
+ <td>
+ <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
+ <i class="bi bi-pencil"></i> Modifier
+ </button>
+ <button class="btn btn-sm btn-danger delete-btn" data-id="${med.id}">
+ <i class="bi bi-trash"></i> Supprimer
+ </button>
+ </td>
+ </tr>
+ `).join('');
 
             // Ajouter les événements aux boutons
             document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -979,18 +987,18 @@
             const tableBody = document.getElementById('alert-medicaments-table');
 
             tableBody.innerHTML = alertMedicaments.map(med => `
-                <tr>
-                    <td>${med.nom}</td>
-                    <td class="text-danger fw-bold">${med.quantiteStock}</td>
-                    <td>${med.seuilAlerte}</td>
-                    <td class="text-danger fw-bold">${med.seuilAlerte - med.quantiteStock}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
-                            <i class="bi bi-pencil"></i> Modifier
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+ <tr>
+ <td>${med.nom}</td>
+ <td class="text-danger fw-bold">${med.quantiteStock}</td>
+ <td>${med.seuilAlerte}</td>
+ <td class="text-danger fw-bold">${med.seuilAlerte - med.quantiteStock}</td>
+ <td>
+ <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
+ <i class="bi bi-pencil"></i> Modifier
+ </button>
+ </td>
+ </tr>
+ `).join('');
 
             // Ajouter les événements aux boutons
             document.querySelectorAll('.edit-btn').forEach(btn => {
