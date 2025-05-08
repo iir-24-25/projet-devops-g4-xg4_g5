@@ -3,111 +3,307 @@
 <head>
     <title>Gestion Utilisateurs</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { padding: 20px; }
-        .card { margin-bottom: 20px; }
-        #error-message { color: red; margin-top: 10px; }
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .form-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .table-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+        #error-message, #success-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
         .action-buttons { white-space: nowrap; }
+        .search-container { margin-bottom: 20px; }
+        .form-title {
+            color: #3a3a3a;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-export {
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="my-4">Gestion des Utilisateurs</h1>
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary"><i class="fas fa-users me-2"></i>Gestion des Utilisateurs</h1>
+        <a href="http://localhost:8080/" class="btn btn-primary">
+            <i class="fas fa-home me-1"></i> Retour a l'accueil
+        </a>
+    </div>
 
     <!-- Formulaire -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 id="form-title">Ajouter un utilisateur</h5>
+    <div class="form-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="form-title"><i class="fas fa-user-plus me-2"></i><span id="form-title">Ajouter un utilisateur</span></h3>
+            <div>
+                <button id="export-btn" class="btn btn-success btn-export">
+                    <i class="fas fa-file-export me-1"></i> Exporter
+                </button>
+            </div>
         </div>
+
+        <form id="user-form">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" id="name" class="form-control" placeholder="Nom" required>
+                        <label for="name">Nom complet</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="email" id="email" class="form-control" placeholder="Email" required>
+                        <label for="email">Adresse email</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        <select id="role" class="form-select" required>
+                            <option value="admin">Admin</option>
+                            <option value="emp">Employé</option>
+                        </select>
+                        <label for="role">Role</label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2" id="submit-btn">
+                        <i class="fas fa-plus me-1"></i> Ajouter
+                    </button>
+                    <button type="button" id="cancel-btn" class="btn btn-outline-secondary" style="display:none;">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div id="error-message" style="display: none;"></div>
+        <div id="success-message" style="display: none;"></div>
+    </div>
+
+    <!-- Recherche et Filtres -->
+    <div class="card mb-4 shadow-sm">
         <div class="card-body">
-            <form id="user-form">
-                <div class="mb-3">
-                    <label class="form-label">Nom</label>
-                    <input type="text" id="name" class="form-control" required>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="search-input" class="form-control" placeholder="Rechercher par nom ou email...">
+                        <button class="btn btn-primary" type="button" id="search-btn">Rechercher</button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="email" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Rôle</label>
-                    <select id="role" class="form-select" required>
+                <div class="col-md-2">
+                    <select id="role-filter" class="form-select">
+                        <option value="">Tous les roles</option>
                         <option value="admin">Admin</option>
-                        <option value="emp">Employé</option>
+                        <option value="emp">Employe</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary" id="submit-btn">Ajouter</button>
-                <button type="button" id="cancel-btn" class="btn btn-secondary" style="display:none;">Annuler</button>
-            </form>
-            <div id="error-message"></div>
+                <div class="col-md-2">
+                    <select id="sort-by" class="form-select">
+                        <option value="name">Trier par nom</option>
+                        <option value="createdAt">Trier par date</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Tableau -->
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead>
+    <div class="table-container">
+        <div class="table-responsive">
+            <table id="users-table" class="table table-hover">
+                <thead class="table-light">
                 <tr>
                     <th>ID</th>
-                    <th>Nom</th>
+                    <th>Utilisateur</th>
                     <th>Email</th>
-                    <th>Rôle</th>
-                    <th>Créé le</th>
+                    <th>Role</th>
+                    <th>Cree le</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody id="users-table"></tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 </div>
 
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirm-modal-body">
+                Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     const API_URL = "/api/users";
     let currentEditId = null;
+    let allUsers = [];
+    let deleteUserId = null;
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 
     // Chargement initial
-    document.addEventListener('DOMContentLoaded', loadUsers);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUsers();
+        setupEventListeners();
+    });
 
-    // Gestion du formulaire
-    document.getElementById('user-form').addEventListener('submit', handleSubmit);
-    document.getElementById('cancel-btn').addEventListener('click', resetForm);
+    function setupEventListeners() {
+        document.getElementById('user-form').addEventListener('submit', handleSubmit);
+        document.getElementById('cancel-btn').addEventListener('click', resetForm);
+        document.getElementById('search-btn').addEventListener('click', searchUsers);
+        document.getElementById('search-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') searchUsers();
+        });
+        document.getElementById('role-filter').addEventListener('change', filterUsers);
+        document.getElementById('sort-by').addEventListener('change', sortUsers);
+        document.getElementById('export-btn').addEventListener('click', exportData);
+        document.getElementById('confirm-delete').addEventListener('click', confirmDelete);
+    }
 
     async function loadUsers() {
         try {
+            showLoading();
             const response = await fetch(API_URL);
             if (!response.ok) throw new Error('Erreur serveur');
-            const users = await response.json();
-            renderUsers(users);
+
+            allUsers = await response.json();
+            renderUsers(allUsers);
+            hideLoading();
         } catch (error) {
             showError("Erreur lors du chargement: " + error.message);
+            hideLoading();
         }
     }
 
     function renderUsers(users) {
-        const table = document.getElementById('users-table');
-        table.innerHTML = '';
+        const tableBody = document.querySelector('#users-table tbody');
+        tableBody.innerHTML = '';
+
+        if (users.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="fas fa-user-slash fa-2x mb-2"></i>
+                    <p>Aucun utilisateur trouvé</p>
+                </td>
+            `;
+            tableBody.appendChild(row);
+            return;
+        }
 
         users.forEach(user => {
             const row = document.createElement('tr');
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+
             row.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>${new Date(user.createdAt).toLocaleString()}</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-warning" onclick="startEdit(${user.id})">Modifier</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Supprimer</button>
-                    </td>
-                `;
-            table.appendChild(row);
+                <td>${user.id}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar">${initials}</div>
+                        <div>${user.name}</div>
+                    </div>
+                </td>
+                <td>${user.email}</td>
+                <td>
+                    <span class="badge ${user.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">
+                        ${user.role === 'admin' ? 'Admin' : 'Employe'}
+                    </span>
+                </td>
+                <td>${formatDate(user.createdAt)}</td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="startEdit(${user.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="showDeleteConfirm(${user.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
     }
 
     async function startEdit(id) {
         try {
+            showLoading();
             const response = await fetch(`${API_URL}/${id}`);
             if (!response.ok) throw new Error('Erreur serveur');
 
@@ -119,11 +315,15 @@
             document.getElementById('role').value = user.role;
 
             document.getElementById('form-title').textContent = "Modifier utilisateur";
-            document.getElementById('submit-btn').textContent = "Mettre à jour";
+            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-save me-1"></i> Mettre à jour';
             document.getElementById('cancel-btn').style.display = 'inline-block';
 
+            // Scroll vers le formulaire
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+            hideLoading();
         } catch (error) {
             showError("Erreur édition: " + error.message);
+            hideLoading();
         }
     }
 
@@ -137,35 +337,69 @@
         };
 
         try {
+            showLoading();
+            let response;
+
             if (currentEditId) {
                 user.id = currentEditId;
-                await fetch(`${API_URL}/${currentEditId}`, {
+                response = await fetch(`${API_URL}/${currentEditId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(user)
                 });
             } else {
-                await fetch(API_URL, {
+                response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(user)
                 });
             }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erreur lors de la requête');
+            }
+
+            showSuccess(currentEditId ? "Utilisateur mis à jour avec succès!" : "Utilisateur ajouté avec succès!");
             resetForm();
             loadUsers();
         } catch (error) {
             showError("Erreur: " + error.message);
+        } finally {
+            hideLoading();
         }
     }
 
-    async function deleteUser(id) {
-        if (!confirm("Supprimer cet utilisateur ?")) return;
+    function showDeleteConfirm(id) {
+        deleteUserId = id;
+        const user = allUsers.find(u => u.id === id);
+        document.getElementById('confirm-modal-body').innerHTML = `
+            Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>${user.name}</strong> (${user.email}) ?
+            <div class="alert alert-warning mt-2">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Cette action est irréversible!
+            </div>
+        `;
+        confirmModal.show();
+    }
+
+    async function confirmDelete() {
+        if (!deleteUserId) return;
 
         try {
-            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            showLoading();
+            const response = await fetch(`${API_URL}/${deleteUserId}`, { method: 'DELETE' });
+
+            if (!response.ok) throw new Error('Erreur lors de la suppression');
+
+            showSuccess("Utilisateur supprimé avec succès!");
+            confirmModal.hide();
             loadUsers();
         } catch (error) {
             showError("Erreur suppression: " + error.message);
+        } finally {
+            hideLoading();
+            deleteUserId = null;
         }
     }
 
@@ -173,16 +407,183 @@
         document.getElementById('user-form').reset();
         currentEditId = null;
         document.getElementById('form-title').textContent = "Ajouter un utilisateur";
-        document.getElementById('submit-btn').textContent = "Ajouter";
+        document.getElementById('submit-btn').innerHTML = '<i class="fas fa-plus me-1"></i> Ajouter';
         document.getElementById('cancel-btn').style.display = 'none';
-        document.getElementById('error-message').textContent = '';
+        hideMessages();
     }
 
     function showError(message) {
-        document.getElementById('error-message').textContent = message;
+        const errorEl = document.getElementById('error-message');
+        errorEl.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${message}`;
+        errorEl.style.display = 'block';
         setTimeout(() => {
-            document.getElementById('error-message').textContent = '';
+            errorEl.style.display = 'none';
         }, 5000);
+    }
+
+    function showSuccess(message) {
+        const successEl = document.getElementById('success-message');
+        successEl.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+        successEl.style.display = 'block';
+        setTimeout(() => {
+            successEl.style.display = 'none';
+        }, 5000);
+    }
+
+    function hideMessages() {
+        document.getElementById('error-message').style.display = 'none';
+        document.getElementById('success-message').style.display = 'none';
+    }
+
+    function showLoading() {
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...';
+            submitBtn.disabled = true;
+        }
+    }
+
+    function hideLoading() {
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            if (currentEditId) {
+                submitBtn.innerHTML = '<i class="fas fa-save me-1"></i> Mettre à jour';
+            } else {
+                submitBtn.innerHTML = '<i class="fas fa-plus me-1"></i> Ajouter';
+            }
+            submitBtn.disabled = false;
+        }
+    }
+
+    async function searchUsers() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        if (!searchTerm) {
+            loadUsers();
+            return;
+        }
+
+        try {
+            showLoading();
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Erreur serveur');
+
+            const users = await response.json();
+            const filtered = users.filter(user =>
+                user.name.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm));
+
+            renderUsers(filtered);
+            hideLoading();
+        } catch (error) {
+            showError("Erreur recherche: " + error.message);
+            hideLoading();
+        }
+    }
+
+    async function filterUsers() {
+        const role = document.getElementById('role-filter').value;
+        if (!role) {
+            loadUsers();
+            return;
+        }
+
+        try {
+            showLoading();
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Erreur serveur');
+
+            const users = await response.json();
+            const filtered = users.filter(user => user.role === role);
+
+            renderUsers(filtered);
+            hideLoading();
+        } catch (error) {
+            showError("Erreur filtre: " + error.message);
+            hideLoading();
+        }
+    }
+
+    async function sortUsers() {
+        const sortBy = document.getElementById('sort-by').value;
+
+        try {
+            showLoading();
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Erreur serveur');
+
+            let users = await response.json();
+
+            users.sort((a, b) => {
+                if (sortBy === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else {
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                }
+            });
+
+            renderUsers(users);
+            hideLoading();
+        } catch (error) {
+            showError("Erreur tri: " + error.message);
+            hideLoading();
+        }
+    }
+
+    function exportData() {
+        if (allUsers.length === 0) {
+            showError("Aucune donnée à exporter");
+            return;
+        }
+
+        Swal.fire({
+            title: 'Exporter les données',
+            text: 'Choisissez le format d\'export',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'CSV',
+            cancelButtonText: 'Excel',
+            showDenyButton: true,
+            denyButtonText: 'JSON'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                exportToCSV();
+            } else if (result.isDenied) {
+                exportToJSON();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                exportToExcel();
+            }
+        });
+    }
+
+    function exportToCSV() {
+        const csv = Papa.unparse(allUsers);
+        downloadFile(csv, 'utilisateurs.csv', 'text/csv;charset=utf-8;');
+        showSuccess("Export CSV réussi!");
+    }
+
+    function exportToExcel() {
+        const ws = XLSX.utils.json_to_sheet(allUsers);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Utilisateurs");
+        XLSX.writeFile(wb, 'utilisateurs.xlsx');
+        showSuccess("Export Excel réussi!");
+    }
+
+    function exportToJSON() {
+        const json = JSON.stringify(allUsers, null, 2);
+        downloadFile(json, 'utilisateurs.json', 'application/json');
+        showSuccess("Export JSON réussi!");
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 </body>
