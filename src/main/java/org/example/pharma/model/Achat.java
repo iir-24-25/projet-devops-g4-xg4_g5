@@ -2,6 +2,7 @@ package org.example.pharma.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.pharma.model.Fournisseur;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,32 +10,30 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "achats")
 @Data
+@Table(name = "achats")
 public class Achat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "fournisseur_id", nullable = false)
     private Fournisseur fournisseur;
 
-    @Column(name = "date_achat")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateAchat = new Date();
+    @Column(name = "date_achat", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Date dateAchat;
 
-    @Column(name = "montant_total", precision = 10, scale = 2, nullable = false)
+    @Column(name = "montant_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal montantTotal;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "mode_paiement", nullable = false)
-    private ModePaiementAchat modePaiement;
+    @Column(nullable = false)
+    private ModePaiement modePaiement;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatutAchat statut = StatutAchat.EN_ATTENTE;
+    @Column(columnDefinition = "ENUM('En attente', 'Payé', 'Annulé') DEFAULT 'En attente'")
+    private StatutAchat statut;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
@@ -46,4 +45,24 @@ public class Achat {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    public enum ModePaiement {
+        Espèces, Chèque, Virement, Carte
+    }
+
+    public enum StatutAchat {
+        En_attente("En attente"), Payé, Annulé;
+
+        private String displayName;
+
+        StatutAchat() {}
+
+        StatutAchat(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName != null ? displayName : name();
+        }
+    }
 }

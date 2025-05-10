@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Pharma App</title>
+    <link rel="stylesheet" href="/css/styleLogin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-prescription-bottle-alt"></i>
+            Pharma App
+        </a>
+        <div class="nav-links">
+            <a href="/login" class="nav-link">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+            <a href="/register" class="nav-link active">
+                <i class="fas fa-user-plus"></i> Inscription
+            </a>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="auth-form">
+        <h1><i class="fas fa-user-plus"></i> Inscription</h1>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form action="/register" method="post">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Nom d'utilisateur:</label>
+                <input type="text" id="username" name="username" required placeholder="Choisissez un nom d'utilisateur">
+            </div>
+
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Entrez votre email">
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Mot de passe:</label>
+                <input type="password" id="password" name="password" required placeholder="Créez un mot de passe">
+                <small class="password-toggle" onclick="togglePassword('password')">
+                    <i class="fas fa-eye"></i> Afficher
+                </small>
+                <div class="password-strength">
+                    <div class="strength-meter">
+                        <div class="strength-bar"></div>
+                    </div>
+                    <small class="strength-text">Force du mot de passe: <span>Faible</span></small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-user-edit"></i> S'inscrire
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p>Déjà un compte? <a href="/login">Se connecter</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add focus effects to form inputs
+    document.querySelectorAll('.form-group input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+
+        input.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+
+    // Password toggle functionality
+    function togglePassword(id) {
+        const passwordInput = document.getElementById(id);
+        const toggleText = passwordInput.nextElementSibling;
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleText.innerHTML = '<i class="fas fa-eye-slash"></i> Cacher';
+        } else {
+            passwordInput.type = 'password';
+            toggleText.innerHTML = '<i class="fas fa-eye"></i> Afficher';
+        }
+    }
+
+    // Password strength checker
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text span');
+            const password = this.value;
+            let strength = 0;
+
+            // Check password length
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+
+            // Check for mixed case
+            if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1;
+
+            // Check for numbers
+            if (password.match(/[0-9]/)) strength += 1;
+
+            // Check for special chars
+            if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+
+            // Update strength meter
+            const width = strength * 20;
+            strengthBar.style.width = width + '%';
+
+            // Update colors and text
+            if (strength <= 1) {
+                strengthBar.style.backgroundColor = '#f44336';
+                strengthText.textContent = 'Faible';
+            } else if (strength <= 3) {
+                strengthBar.style.backgroundColor = '#ff9800';
+                strengthText.textContent = 'Moyenne';
+            } else {
+                strengthBar.style.backgroundColor = '#4CAF50';
+                strengthText.textContent = 'Forte';
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaGestion - Solution de Gestion Pharmaceutique</title>
+    <link rel="stylesheet" th:href="@{/css/styleLogin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1976D2;
+            --dark-blue: #0D47A1;
+            --light-blue: #E3F2FD;
+            --white: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--white);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--white) 100%);
+            padding: 8rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: gradientBG 12s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--dark-blue);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInDown 1s ease forwards;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #424242;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--primary-blue);
+            color: var(--white);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(25, 118, 210, 0.3);
+            opacity: 0;
+            animation: fadeIn 1s ease 0.6s forwards;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+            background: var(--dark-blue);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            color: var(--dark-blue);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary-blue);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(25, 118, 210, 0.1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) !important;
+            box-shadow: 0 15px 30px rgba(25, 118, 210, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            background: var(--primary-blue);
+            padding: 5rem 2rem;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 3rem auto 0;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-item.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-prescription-bottle-alt"></i>
+            PharmaGestion
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link active">
+                <i class="fas fa-home"></i> Accueil
+            </a>
+            <a href="/login" class="nav-link">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+            <a href="/register" class="nav-link">
+                <i class="fas fa-user-plus"></i> Inscription
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Gestion Pharmaceutique Intelligente</h1>
+    <p>Optimisez la gestion de votre pharmacie avec notre solution complète, intuitive et sécurisée</p>
+    <a href="/register" class="hero-btn">
+        <i class="fas fa-rocket"></i> Démarrer maintenant
+    </a>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <h2 class="section-title">Nos Fonctionnalités</h2>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-pills"></i>
+            </div>
+            <h3>Gestion de Stock</h3>
+            <p>Suivi en temps réel des médicaments, alertes de péremption et gestion des lots.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h3>Facturation</h3>
+            <p>Système de facturation intégré avec gestion des remboursements et assurances.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3>Dossier Patient</h3>
+            <p>Historique médical complet et interactions médicamenteuses en un clic.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>Reporting</h3>
+            <p>Tableaux de bord personnalisables et rapports analytiques détaillés.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Mobile Friendly</h3>
+            <p>Accédez à votre pharmacie depuis n'importe quel appareil, à tout moment.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Sécurité</h3>
+            <p>Protection des données conforme aux normes de santé les plus strictes.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <h2 class="section-title" style="color: var(--white);">PharmaGestion en Chiffres</h2>
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number" data-target="250">0</div>
+            <p>Pharmacies</p>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-number" data-target="5000">0</div>
+            <p>Médicaments gérés</p>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-number" data-target="1200">0</div>
+            <p>Utilisateurs</p>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-number" data-target="99">0</div>
+            <p>% Satisfaction</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Animation au défilement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animer les cartes fonctionnalités
+        const featureCards = document.querySelectorAll('.feature-card');
+        const statItems = document.querySelectorAll('.stat-item');
+
+        const animateElements = () => {
+            // Feature Cards
+            featureCards.forEach((card, index) => {
+                const cardPosition = card.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+
+                if (cardPosition < screenPosition) {
+                    setTimeout(() => {
+                        card.classList.add('animate');
+                    }, index * 150);
+                }
+            });
+
+            // Stat Items
+            statItems.forEach((item, index) => {
+                const itemPosition = item.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+
+                if (itemPosition < screenPosition) {
+                    setTimeout(() => {
+                        item.classList.add('animate');
+                        if (index === statItems.length - 1) {
+                            animateCounters();
+                        }
+                    }, index * 150);
+                }
+            });
+        };
+
+        // Animation des compteurs
+        const animateCounters = () => {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(animateCounters, 1);
+                } else {
+                    counter.innerText = target + (counter.getAttribute('data-target') === '99' ? '%' : '+');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateElements);
+        animateElements(); // Pour les éléments déjà visibles au chargement
+
+        // Highlight le lien actif dans la navbar
+        const currentPage = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

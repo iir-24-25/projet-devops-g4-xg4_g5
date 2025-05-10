@@ -1,0 +1,314 @@
+/* Styles pour l'application Pharma - Thème Bleu & Blanc */
+/* Reset et styles de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    background-color: #f8fafc; /* Fond de secours très clair */
+}
+
+/* Fond d'écran médicaments bleu/blanc */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(1.05) saturate(1.2);
+    z-index: -1;
+    opacity: 0.9;
+}
+
+/* Conteneur principal */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Formulaire d'authentification */
+.auth-form {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #e0f2fe;
+    box-shadow: 0 4px 20px rgba(30, 100, 200, 0.1);
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    position: relative;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.auth-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(30, 100, 200, 0.15);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Titre du formulaire */
+.auth-form h1 {
+    color: #1e40af;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.auth-form h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: #3b82f6;
+    border-radius: 3px;
+}
+
+/* Groupes de formulaire */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+}
+
+.form-group input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background-color: white;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    padding: 13px 24px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Alertes */
+.alert {
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px solid transparent;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+/* Liens */
+.auth-links {
+    text-align: center;
+    margin-top: 20px;
+    color: #64748b;
+}
+
+.auth-links a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.auth-links a:hover {
+    color: #1e40af;
+    text-decoration: underline;
+}
+
+/* Icônes */
+.fas {
+    margin-right: 8px;
+    color: #3b82f6;
+}
+
+/* Gestion du mot de passe */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 38px;
+    cursor: pointer;
+    color: #3b82f6;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: #1e40af;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .auth-form {
+        padding: 30px 20px;
+    }
+
+    .auth-form h1 {
+        font-size: 24px;
+    }
+
+    .btn {
+        padding: 11px 20px;
+    }
+}
+
+/* Éléments décoratifs */
+.auth-form::before {
+    content: '+';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: rgba(59, 130, 246, 0.1);
+    font-weight: bold;
+}
+
+.auth-form::after {
+    content: '℞';
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 24px;
+    color: rgba(59, 130, 246, 0.1);
+    font-weight: bold;
+}
+
+
+/* Navbar Styles */
+.navbar {
+    background-color: #1976D2;
+    padding: 1rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo i {
+    margin-right: 10px;
+    font-size: 1.8rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Ajustement du contenu principal pour la navbar */
+.container {
+    margin-top: 80px; /* Espace pour la navbar */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+    }
+
+    .nav-links {
+        gap: 10px;
+    }
+
+    .nav-link {
+        padding: 0.5rem;
+    }
+}

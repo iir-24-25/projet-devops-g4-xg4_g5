@@ -1,40 +1,70 @@
-package org.example.pharma.model;
+package org.example.pharma.model;//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "users")
+@Table(
+        name = "user",
+        uniqueConstraints = {@UniqueConstraint(
+                columnNames = {"email"}
+        )}
+)
 public class User {
-    public enum Role {
-        admin, emp
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+    )
+    private Long id;
+    private String username;
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String email;
+    private String password;
+
+    public User() {
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public Long getId() {
+        return this.id;
+    }
 
-    @Column(nullable = false)
-    private String name;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    public String getUsername() {
+        return this.username;
+    }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    public String getPassword() {
+        return this.password;
+    }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
