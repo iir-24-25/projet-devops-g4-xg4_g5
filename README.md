@@ -17,32 +17,7 @@ Pharma est une application web développée avec Spring Boot 3.4.5 permettant la
 - MySQL
 - Maven
 
-## Configuration de la base de données
-
-Configurer les informations de connexion à la base de données dans le fichier `application.properties` :
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/pharma
-spring.datasource.username=ton_utilisateur
-spring.datasource.password=ton_mot_de_passe
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
-server.port=8080
-Lancement de l'application
-Cloner le dépôt :
-git clone https://github.com/ton-utilisateur/pharma.git
-cd pharma
-
-
-Lancer l'application avec Maven :
-mvn spring-boot:run
-Accéder à l'application :
-
-http://localhost:8080/register
-
-Fonctionnalités
+## Fonctionnalités
 Authentification
 Enregistrement et connexion des utilisateurs
 
@@ -98,5 +73,32 @@ src/
 │       ├── static/
 │       └── application.properties
 └── test/
+
+## Configuration de la base de données
+
+Configurer les informations de connexion à la base de données dans le fichier `application.properties` :
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/pharma
+spring.datasource.username=ton_utilisateur
+spring.datasource.password=ton_mot_de_passe
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+server.port=8080
+Lancement de l'application
+Cloner le dépôt :
+git clone https://github.com/ton-utilisateur/pharma.git
+cd pharma
+
+
+Lancer l'application avec Maven :
+mvn spring-boot:run
+Accéder à l'application :
+
+http://localhost:8080/register
+
+
 
 
