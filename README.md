@@ -59,20 +59,7 @@ Export des données en formats CSV ou Excel
 
 Import de fichiers pour mise à jour en masse
 
-Structure du projet
-src/
-├── main/
-│   ├── java/org/example/pharma/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── repositories/
-│   │   └── PharmaApplication.java
-│   └── resources/
-│       ├── templates/
-│       ├── static/
-│       └── application.properties
-└── test/
+
 
 ## Configuration de la base de données
 
@@ -98,7 +85,20 @@ mvn spring-boot:run
 Accéder à l'application :
 
 http://localhost:8080/register
-
+Structure du projet
+src/
+├── main/
+│   ├── java/org/example/pharma/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   └── PharmaApplication.java
+│   └── resources/
+│       ├── templates/
+│       ├── static/
+│       └── application.properties
+└── test/
 
 
 
