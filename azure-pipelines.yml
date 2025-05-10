@@ -1,0 +1,31 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+    displayName: 'Checkout code'
+
+  # Étape pour installer Java JDK 17
+  - script: |
+      sudo apt-get update
+      sudo apt-get install openjdk-17-jdk -y
+      java -version
+    displayName: 'Install Java JDK 17'
+
+  # Étape pour exécuter le build Maven, en évitant les tests pendant la compilation
+  - script: mvn clean install -DskipTests
+    displayName: 'Build with Maven (skip tests)'
+
+  # Étape pour exécuter les tests Maven
+  - script: mvn test
+    displayName: 'Run tests with Maven'
