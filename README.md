@@ -66,9 +66,9 @@ Import de fichiers pour mise à jour en masse
 Configurer les informations de connexion à la base de données dans le fichier `application.properties` :
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/pharma
-spring.datasource.username=ton_utilisateur
-spring.datasource.password=ton_mot_de_passe
+spring.datasource.url=jdbc:mysql://localhost:3306/pharma_db
+spring.datasource.username=root
+spring.datasource.password=
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
