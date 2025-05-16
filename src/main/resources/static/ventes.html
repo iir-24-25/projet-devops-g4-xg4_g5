@@ -208,7 +208,7 @@
             <div class="stat-card bg-danger">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="value" id="montantTotal">0 €</div>
+                        <div class="value" id="chiffreAffaires">0 €</div>
                         <div class="label">Chiffre d'Affaires</div>
                     </div>
                     <i class="bi bi-currency-euro"></i>
@@ -325,18 +325,18 @@
                     <input type="hidden" id="venteId">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="clientId" class="form-label">Client ID</label>
-                            <input type="number" class="form-control" id="clientId" required>
+                            <label for="clientIdInput" class="form-label">Client ID</label>
+                            <input type="number" class="form-control" id="clientIdInput" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="montantTotal" class="form-label">Montant Total</label>
-                            <input type="number" step="0.01" class="form-control" id="montantTotal" required>
+                            <label for="venteMontantTotal" class="form-label">Montant Total</label>
+                            <input type="number" step="0.01" class="form-control" id="venteMontantTotal" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="statut" class="form-label">Statut</label>
-                            <select class="form-select" id="statut" required>
+                            <label for="venteStatut" class="form-label">Statut</label>
+                            <select class="form-select" id="venteStatut" required>
                                 <option value="EN_ATTENTE">En attente</option>
                                 <option value="PAYEE">Payée</option>
                                 <option value="ANNULEE">Annulée</option>
@@ -344,8 +344,8 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="modePaiement" class="form-label">Mode de Paiement</label>
-                            <select class="form-select" id="modePaiement">
+                            <label for="venteModePaiement" class="form-label">Mode de Paiement</label>
+                            <select class="form-select" id="venteModePaiement">
                                 <option value="CARTE">Carte</option>
                                 <option value="ESPECES">Espèces</option>
                                 <option value="VIREMENT">Virement</option>
@@ -356,17 +356,17 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="reference" class="form-label">Référence</label>
-                            <input type="text" class="form-control" id="reference">
+                            <label for="venteReference" class="form-label">Référence</label>
+                            <input type="text" class="form-control" id="venteReference">
                         </div>
                         <div class="col-md-6">
-                            <label for="dateVente" class="form-label">Date de vente</label>
-                            <input type="datetime-local" class="form-control" id="dateVente">
+                            <label for="venteDate" class="form-label">Date de vente</label>
+                            <input type="datetime-local" class="form-control" id="venteDate">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="notes" rows="3"></textarea>
+                        <label for="venteNotes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="venteNotes" rows="3"></textarea>
                     </div>
                 </form>
             </div>
@@ -427,7 +427,7 @@
         const totalVentesElement = document.getElementById('totalVentes');
         const ventesPayeesElement = document.getElementById('ventesPayees');
         const ventesAttenteElement = document.getElementById('ventesAttente');
-        const montantTotalElement = document.getElementById('montantTotal');
+        const chiffreAffairesElement = document.getElementById('chiffreAffaires');
 
         let currentSort = { column: 'id', direction: 'asc' };
         let ventesData = [];
@@ -440,13 +440,13 @@
         saveVenteBtn.addEventListener('click', function() {
             const venteId = document.getElementById('venteId').value;
             const venteData = {
-                client: { id: parseInt(document.getElementById('clientId').value) },
-                montantTotal: parseFloat(document.getElementById('montantTotal').value),
-                statut: document.getElementById('statut').value,
-                modePaiement: document.getElementById('modePaiement').value,
-                reference: document.getElementById('reference').value,
-                notes: document.getElementById('notes').value,
-                dateVente: document.getElementById('dateVente').value || new Date().toISOString()
+                client: { id: parseInt(document.getElementById('clientIdInput').value) },
+                montantTotal: parseFloat(document.getElementById('venteMontantTotal').value),
+                statut: document.getElementById('venteStatut').value,
+                modePaiement: document.getElementById('venteModePaiement').value,
+                reference: document.getElementById('venteReference').value,
+                notes: document.getElementById('venteNotes').value,
+                dateVente: document.getElementById('venteDate').value || new Date().toISOString()
             };
 
             const method = venteId ? 'PUT' : 'POST';
@@ -523,7 +523,7 @@
 
             // Montant total
             const montant = ventes.reduce((sum, v) => sum + v.montantTotal, 0);
-            montantTotalElement.textContent = montant.toFixed(2) + ' €';
+            chiffreAffairesElement.textContent = montant.toFixed(2) + ' €';
         }
 
         // Créer les graphiques
@@ -737,17 +737,17 @@
                 .then(response => response.json())
                 .then(vente => {
                     document.getElementById('venteId').value = vente.id;
-                    document.getElementById('clientId').value = vente.client.id;
-                    document.getElementById('montantTotal').value = vente.montantTotal;
-                    document.getElementById('statut').value = vente.statut;
-                    document.getElementById('modePaiement').value = vente.modePaiement;
-                    document.getElementById('reference').value = vente.reference || '';
-                    document.getElementById('notes').value = vente.notes || '';
+                    document.getElementById('clientIdInput').value = vente.client.id;
+                    document.getElementById('venteMontantTotal').value = vente.montantTotal;
+                    document.getElementById('venteStatut').value = vente.statut;
+                    document.getElementById('venteModePaiement').value = vente.modePaiement;
+                    document.getElementById('venteReference').value = vente.reference || '';
+                    document.getElementById('venteNotes').value = vente.notes || '';
 
                     // Formater la date pour l'input datetime-local
                     const date = new Date(vente.dateVente);
                     const formattedDate = date.toISOString().slice(0, 16);
-                    document.getElementById('dateVente').value = formattedDate;
+                    document.getElementById('venteDate').value = formattedDate;
 
                     document.getElementById('modalTitle').textContent = 'Modifier Vente';
                     addVenteModal.show();

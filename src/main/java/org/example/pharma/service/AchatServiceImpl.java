@@ -23,7 +23,8 @@ public class AchatServiceImpl implements AchatService {
 
     @Override
     public Achat getAchatById(Long id) {
-        return achatRepository.findById(id).orElse(null);
+        return achatRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Achat non trouvé avec l'ID: " + id));
     }
 
     @Override
@@ -32,26 +33,20 @@ public class AchatServiceImpl implements AchatService {
     }
 
     @Override
-    public Achat updateAchat(Long id, Achat achat) {
-        if (achatRepository.existsById(id)) {
-            achat.setId(id);
-            return achatRepository.save(achat);
-        }
-        return null;
+    public Achat updateAchat(Long id, Achat achatDetails) {
+        Achat achat = getAchatById(id);
+        achat.setNomFournisseur(achatDetails.getNomFournisseur());
+        achat.setDateAchat(achatDetails.getDateAchat());
+        achat.setMontantTotal(achatDetails.getMontantTotal());
+        achat.setModePaiement(achatDetails.getModePaiement());
+        achat.setStatut(achatDetails.getStatut());
+        achat.setNotes(achatDetails.getNotes());
+        return achatRepository.save(achat);
     }
 
     @Override
     public void deleteAchat(Long id) {
-        achatRepository.deleteById(id);
-    }
-
-    @Override
-    public List<Achat> getAchatsByFournisseur(Long fournisseurId) {
-        return achatRepository.findByFournisseurId(fournisseurId);
-    }
-
-    @Override
-    public List<Achat> getAchatsByStatut(String statut) {
-        return achatRepository.findByStatut(Achat.StatutAchat.valueOf(statut));
+        Achat achat = getAchatById(id);
+        achatRepository.delete(achat);
     }
 }

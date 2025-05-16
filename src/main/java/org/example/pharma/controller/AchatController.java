@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/achats")
+@CrossOrigin(origins = "*") // Autoriser les requêtes depuis n'importe quelle origine
 public class AchatController {
 
     private final AchatService achatService;
@@ -24,34 +25,22 @@ public class AchatController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Achat> getAchatById(@PathVariable Long id) {
-        Achat achat = achatService.getAchatById(id);
-        return achat != null ? ResponseEntity.ok(achat) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(achatService.getAchatById(id));
     }
 
     @PostMapping
-    public Achat createAchat(@RequestBody Achat achat) {
-        return achatService.createAchat(achat);
+    public ResponseEntity<Achat> createAchat(@RequestBody Achat achat) {
+        return ResponseEntity.ok(achatService.createAchat(achat));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Achat> updateAchat(@PathVariable Long id, @RequestBody Achat achat) {
-        Achat updatedAchat = achatService.updateAchat(id, achat);
-        return updatedAchat != null ? ResponseEntity.ok(updatedAchat) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(achatService.updateAchat(id, achat));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAchat(@PathVariable Long id) {
         achatService.deleteAchat(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/fournisseur/{fournisseurId}")
-    public List<Achat> getAchatsByFournisseur(@PathVariable Long fournisseurId) {
-        return achatService.getAchatsByFournisseur(fournisseurId);
-    }
-
-    @GetMapping("/statut/{statut}")
-    public List<Achat> getAchatsByStatut(@PathVariable String statut) {
-        return achatService.getAchatsByStatut(statut);
     }
 }

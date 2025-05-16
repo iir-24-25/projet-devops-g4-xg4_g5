@@ -2,7 +2,6 @@ package org.example.pharma.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.example.pharma.model.Fournisseur;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,32 +9,32 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Data
 @Table(name = "achats")
+@Data
 public class Achat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "fournisseur_id", nullable = false)
-    private Fournisseur fournisseur;
+    @Column(name = "nom_fournisseur", nullable = false)
+    private String nomFournisseur;
 
-    @Column(name = "date_achat", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "date_achat", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateAchat;
 
     @Column(name = "montant_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal montantTotal;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "mode_paiement", nullable = false, columnDefinition = "ENUM('Espèces', 'Chèque', 'Virement', 'Carte')")
     private ModePaiement modePaiement;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('En attente', 'Payé', 'Annulé') DEFAULT 'En attente'")
-    private StatutAchat statut;
+    @Column(name = "statut", columnDefinition = "ENUM('En attente', 'Payé', 'Annulé') DEFAULT 'En attente'")
+    private StatutAchat statut = StatutAchat.EN_ATTENTE;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
     @CreationTimestamp
@@ -47,22 +46,35 @@ public class Achat {
     private Date updatedAt;
 
     public enum ModePaiement {
-        Espèces, Chèque, Virement, Carte
+        ESPECES("Espèces"),
+        CHEQUE("Chèque"),
+        VIREMENT("Virement"),
+        CARTE("Carte");
+
+        private final String displayValue;
+
+        ModePaiement(String displayValue) {
+            this.displayValue = displayValue;
+        }
+
+        public String getDisplayValue() {
+            return displayValue;
+        }
     }
 
     public enum StatutAchat {
-        En_attente("En attente"), Payé, Annulé;
+        EN_ATTENTE("En attente"),
+        PAYE("Payé"),
+        ANNULE("Annulé");
 
-        private String displayName;
+        private final String displayValue;
 
-        StatutAchat() {}
-
-        StatutAchat(String displayName) {
-            this.displayName = displayName;
+        StatutAchat(String displayValue) {
+            this.displayValue = displayValue;
         }
 
-        public String getDisplayName() {
-            return displayName != null ? displayName : name();
+        public String getDisplayValue() {
+            return displayValue;
         }
     }
 }

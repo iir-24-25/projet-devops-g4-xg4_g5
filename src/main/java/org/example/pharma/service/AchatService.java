@@ -10,6 +10,4 @@ public interface AchatService {
     Achat createAchat(Achat achat);
     Achat updateAchat(Long id, Achat achat);
     void deleteAchat(Long id);
-    List<Achat> getAchatsByFournisseur(Long fournisseurId);
-    List<Achat> getAchatsByStatut(String statut);
 }

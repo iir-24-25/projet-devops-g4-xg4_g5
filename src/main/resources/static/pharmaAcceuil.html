@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaVision | Accueil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset et base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* Conteneur vidéo full screen */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        #pharma-video {
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            /*filter: brightness(0.3);*/
+        }
+
+        /* Contenu centré */
+        .content {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 42px;
+            background: linear-gradient(135deg, #0288d1, #00bcd4);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            border: none;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #00bcd4, #0288d1);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.15) 50%);
+            background-size: 300% 300%;
+            transition: 0.6s;
+            opacity: 0;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+            background-position: 100% 100%;
+        }
+
+        /* Fallback pour mobile */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 14px 36px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Vidéo d'arrière-plan full screen -->
+<div class="video-background">
+    <video id="pharma-video" autoplay muted loop playsinline>
+        <source src="media/pharmavideo.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas les vidéos HTML5.
+    </video>
+</div>
+
+<!-- Contenu principal -->
+<div class="content">
+    <h1>Bienvenue chez PharmaVision</h1>
+    <p>La solution complète pour la gestion de votre pharmacie</p>
+    <a href="/login" class="btn">Commencer</a>
+</div>
+
+<script>
+    // Gestion de la vidéo et fallback
+    document.addEventListener('DOMContentLoaded', () => {
+        const video = document.getElementById('pharma-video');
+        const videoContainer = document.querySelector('.video-background');
+        const content = document.querySelector('.content');
+
+        // Fallback si la vidéo ne se charge pas
+        video.addEventListener('error', () => {
+            console.error("La vidéo n'a pas pu charger");
+            videoContainer.style.display = 'none';
+            content.style.background = "linear-gradient(135deg, #0288d1, #00bcd4)";
+        });
+
+        // Forcer le démarrage sur mobile
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Tentative de lecture automatique échouée:", error);
+                video.muted = true;
+                video.play();
+            });
+        }
+    });
+</script>
+</body>
+</html>

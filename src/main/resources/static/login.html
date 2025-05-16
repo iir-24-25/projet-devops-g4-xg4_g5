@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Pharma App</title>
-    <link rel="stylesheet" th:href="@{/css/styleLogin.css}">
+    <link rel="stylesheet" href="/css/styleLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -31,8 +31,9 @@
     <div class="auth-form">
         <h1><i class="fas fa-prescription-bottle-alt"></i> Connexion</h1>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <!-- Messages flash -->
+        <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+        <div id="success-message" class="alert alert-success" style="display: none;"></div>
 
         <form action="/login" method="post">
             <div class="form-group">
@@ -61,22 +62,35 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des messages flash
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const success = urlParams.get('success');
 
-    // Dans les deux fichiers HTML, ajoutez ce script avant </body>
+        if (error) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = decodeURIComponent(error);
+        }
+
+        if (success) {
+            const successDiv = document.getElementById('success-message');
+            successDiv.style.display = 'block';
+            successDiv.textContent = decodeURIComponent(success);
+        }
+
         // Highlight le lien actif dans la navbar
-        document.addEventListener('DOMContentLoaded', function() {
         const currentPage = window.location.pathname;
-        const navLinks = document.querySelectorAll('.nav-link');
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    });
 
-        navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-        link.classList.add('active');
-    } else {
-        link.classList.remove('active');
-    }
-    });
-    });
-    // Gestion de l'affichage du mot de passe
     function togglePassword(id) {
         const passwordInput = document.getElementById(id);
         const toggleText = passwordInput.nextElementSibling;

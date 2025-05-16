@@ -60,4 +60,6 @@ public class FournisseurServiceImpl implements FournisseurService {
         return fournisseurRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fournisseur non trouvé avec l'ID: " + id));
     }
+
+
 }

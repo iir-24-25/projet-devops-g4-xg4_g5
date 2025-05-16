@@ -1,0 +1,44 @@
+#version: '3.8'
+#
+#services:
+#  pharma-app:
+#    image: pharma-app:latest
+#    build:
+#      context: .
+#    ports:
+#      - "8081:8080"  # Changer le port externe
+#    depends_on:
+#      - pharma-db
+#    environment:
+#      - DB_HOST=pharma-db
+#      - DB_USER=root
+#      - DB_PASSWORD=
+#      - DB_NAME=pharmacy_db
+#
+#  pharma-db:
+#    image: mysql:5.7
+#    environment:
+#      MYSQL_ROOT_PASSWORD:
+#      MYSQL_DATABASE: pharmacy_db
+#    ports:
+#      - "3307:3306"
+#    volumes:
+#      - pharma-db-data:/var/lib/mysql
+#
+#  prometheus:
+#    image: prom/prometheus
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#
+#  grafana:
+#    image: grafana/grafana
+#    ports:
+#      - "3000:3000"
+#    depends_on:
+#      - prometheus
+#
+#volumes:
+#  pharma-db-data:
+#    driver: local
