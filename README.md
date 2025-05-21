@@ -146,7 +146,7 @@ Ils sont écrits avec JUnit 5 et Mockito pour simuler les dépendances.
 ---
 
 Pour lancer les tests, utilise la commande Maven suivante :  
-```bash
+
 mvn test
 
 ---
@@ -164,7 +164,7 @@ src/
 │       ├── static/
 │       └── application.properties
 └── test/
-
+```bash
 
 (https://github.com/user-attachments/assets/356a1883-6f8e-472f-9862-0dcd9ec7cce3)
 
