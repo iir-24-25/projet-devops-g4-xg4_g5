@@ -114,7 +114,23 @@ Pour lancer les tests, utilise la commande Maven suivante :
 ```bash
 mvn test
 
+---
+## Structure du projet
+src/
+├── main/
+│   ├── java/org/example/pharma/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   └── PharmaApplication.java
+│   └── resources/
+│       ├── templates/
+│       ├── static/
+│       └── application.properties
+└── test/
 
+![archiPharma](https://github.com/user-attachments/assets/2af8878d-82f9-4964-bb19-dd12564e7025)
 
 ## Configuration de la base de données
 
@@ -140,20 +156,7 @@ mvn spring-boot:run
 Accéder à l'application :
 
 http://localhost:8080/register
-Structure du projet
-src/
-├── main/
-│   ├── java/org/example/pharma/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── repositories/
-│   │   └── PharmaApplication.java
-│   └── resources/
-│       ├── templates/
-│       ├── static/
-│       └── application.properties
-└── test/
+
 
 
 
