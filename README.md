@@ -165,7 +165,8 @@ src/
 │       └── application.properties
 └── test/
 
-![archiPharma](https://github.com/user-attachments/assets/2af8878d-82f9-4964-bb19-dd12564e7025)
+
+(https://github.com/user-attachments/assets/356a1883-6f8e-472f-9862-0dcd9ec7cce3)
 
 ## Configuration de la base de données
 
