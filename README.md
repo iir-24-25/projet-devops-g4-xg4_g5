@@ -101,6 +101,64 @@ src/
 └── test/
 
 
+## Bonnes pratiques appliquées
+
+- **Architecture en couches (Layered Architecture)**
+  - Séparation claire entre `controllers`, `services`, `repositories` et `models`.
+  - Facilite la maintenance, les tests, et la compréhension du code.
+
+- **Injection de dépendances avec Spring (@Autowired)**
+  - Favorise le découplage des composants.
+  - Simplifie les tests unitaires.
+
+- **Validation des données**
+  - Utilisation des annotations `@Valid`, `@NotEmpty`, `@Email` pour garantir la qualité des données reçues.
+
+- **Gestion sécurisée des mots de passe**
+  - Encodage des mots de passe via `PasswordEncoder`.
+
+- **Utilisation de Lombok**
+  - Réduction du code répétitif (getters/setters, constructeurs).
+
+---
+
+## Design patterns utilisés
+
+- **Singleton (via @Service)**
+  - Les services Spring sont instanciés une seule fois par le conteneur Spring, ce qui garantit une instance unique.
+
+- **Repository pattern**
+  - Les interfaces `UserRepository` étendent `JpaRepository` pour gérer l’accès aux données de manière abstraite.
+
+- **Dependency Injection**
+  - Les dépendances sont injectées automatiquement par Spring, ce qui permet un couplage faible et facilite les tests.
+
+---
+## Tests unitaires
+
+Ce projet inclut des tests unitaires pour garantir la fiabilité et la qualité du code métier.
+
+Les classes testées incluent notamment :  
+- `ClientServiceImpl`  
+- `FournisseurServiceImpl`  
+- `VenteServiceImpl`  
+
+Ces tests couvrent les principales fonctionnalités de chaque service, comme :  
+- La gestion des clients  
+- La gestion des fournisseurs  
+- Le traitement des ventes  
+
+Ils sont écrits avec JUnit 5 et Mockito pour simuler les dépendances.
+
+---
+
+Pour lancer les tests, utilise la commande Maven suivante :  
+```bash
+mvn test
+
+
+
+
 ## Demonstration
 lien: https://youtu.be/J4Sg0SQTUhc
 
