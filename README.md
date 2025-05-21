@@ -59,48 +59,6 @@ Export des données en formats CSV ou Excel
 
 Import de fichiers pour mise à jour en masse
 
-
-
-## Configuration de la base de données
-
-Configurer les informations de connexion à la base de données dans le fichier `application.properties` :
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/pharma_db
-spring.datasource.username=root
-spring.datasource.password=
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
-server.port=8080
-Lancement de l'application
-Cloner le dépôt :
-git clone https://github.com/ton-utilisateur/pharma.git
-cd pharma
-
-
-Lancer l'application avec Maven :
-mvn spring-boot:run
-Accéder à l'application :
-
-http://localhost:8080/register
-Structure du projet
-src/
-├── main/
-│   ├── java/org/example/pharma/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── repositories/
-│   │   └── PharmaApplication.java
-│   └── resources/
-│       ├── templates/
-│       ├── static/
-│       └── application.properties
-└── test/
-
-
 ## Bonnes pratiques appliquées
 
 - **Architecture en couches (Layered Architecture)**
@@ -155,6 +113,48 @@ Ils sont écrits avec JUnit 5 et Mockito pour simuler les dépendances.
 Pour lancer les tests, utilise la commande Maven suivante :  
 ```bash
 mvn test
+
+
+
+## Configuration de la base de données
+
+Configurer les informations de connexion à la base de données dans le fichier `application.properties` :
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/pharma_db
+spring.datasource.username=root
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+server.port=8080
+Lancement de l'application
+Cloner le dépôt :
+git clone https://github.com/ton-utilisateur/pharma.git
+cd pharma
+
+
+Lancer l'application avec Maven :
+mvn spring-boot:run
+Accéder à l'application :
+
+http://localhost:8080/register
+Structure du projet
+src/
+├── main/
+│   ├── java/org/example/pharma/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   └── PharmaApplication.java
+│   └── resources/
+│       ├── templates/
+│       ├── static/
+│       └── application.properties
+└── test/
+
 
 
 
