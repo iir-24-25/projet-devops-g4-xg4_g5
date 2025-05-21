@@ -59,6 +59,41 @@ Export des données en formats CSV ou Excel
 
 Import de fichiers pour mise à jour en masse
 
+## Conteneurisation et Orchestration de l’Application
+
+Objectif
+Le but de cette section est de présenter le processus de conteneurisation de l’application à l’aide de Docker, ainsi que son déploiement et sa gestion via un orchestrateur de conteneurs, en l’occurrence Docker Swarm. Cette approche permet de garantir la portabilité, la scalabilité et la résilience de l’application Pharma.
+
+Conteneurisation avec Docker
+La conteneurisation consiste à emballer l'application avec toutes ses dépendances dans une image exécutable, appelée conteneur. Cela garantit que l'application s'exécutera de manière cohérente sur tous les environnements.
+
+Un fichier Dockerfile a été créé pour construire l’image de l’application pharma-app.
+
+Cette image est ensuite utilisée avec Docker Compose pour créer les conteneurs nécessaires à l’application :
+
+pharma-app : conteneur de l'application web
+
+pharma-db : conteneur de la base de données MySQL
+
+Orchestration avec Docker Swarm
+Docker Swarm est un outil d’orchestration de conteneurs natif de Docker. Il permet de gérer efficacement le déploiement, la mise à l’échelle, les mises à jour continues, et la tolérance aux pannes.
+
+Les étapes suivies :
+
+Initialisation du Swarm :
+docker swarm init
+
+Déploiement du stack :
+docker stack deploy -c docker-compose.yml pharma_stack
+
+Vérification des services déployés :
+docker stack services pharma_stack
+
+Ce système assure la haute disponibilité et l’équilibrage de charge entre les services déployés.
+
+Conclusion
+Grâce à Docker et Docker Swarm, l’application Pharma est désormais conteneurisée, facilement déployable et prête pour un environnement de production. Cette architecture permet une gestion centralisée et efficace des services, ainsi qu'une meilleure résilience face aux pannes et une montée en charge simplifiée.
+
 ## Bonnes pratiques appliquées
 
 - **Architecture en couches (Layered Architecture)**
