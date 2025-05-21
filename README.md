@@ -95,7 +95,29 @@ Ce système assure la haute disponibilité et l’équilibrage de charge entre l
 Conclusion
 Grâce à Docker et Docker Swarm, l’application Pharma est désormais conteneurisée, facilement déployable et prête pour un environnement de production. Cette architecture permet une gestion centralisée et efficace des services, ainsi qu'une meilleure résilience face aux pannes et une montée en charge simplifiée.
 
+## Monitoring avec Prometheus et Grafana
+Le système de monitoring a été mis en place avec succès en utilisant Prometheus comme collecteur de métriques et Grafana pour la visualisation.
+     Configuration
+Prometheus est configuré pour scrapper les métriques exposées par l’application Spring Boot via l’endpoint
+Grafana est connecté à Prometheus en tant que source de données.
+La métrique up confirme que l’instance pharma-app est bien surveillée.
+
+Exemple de métrique visible: ![t](https://github.com/user-attachments/assets/24ca9643-d061-480f-8433-cb5777db8770)
+
+    Visualisation des performances
+Des tableaux de bord personnalisés ont été créés dans Grafana pour suivre les métriques clés :
+
+Latence moyenne des requêtes HTTP
+
+Taux de requêtes par code de statut (2xx, 4xx, 5xx)
+
+Nombre total de requêtes sur une période donnée
+
+    Utilisation de la fonction rate()
+Les compteurs comme http_server_requests_seconds_count sont monotones (toujours croissants). Pour extraire des données exploitables, on utilise rate() afin d’obtenir la variation du compteur dans un intervalle :
+
 ## Bonnes pratiques appliquées
+
 
 - **Architecture en couches (Layered Architecture)**
   - Séparation claire entre `controllers`, `services`, `repositories` et `models`.
