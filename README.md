@@ -3,6 +3,7 @@
 
 Pharma est une application web développée avec Spring Boot 3.4.5 permettant la gestion complète des médicaments, des fournisseurs, des ventes, des utilisateurs, ainsi qu’un tableau de bord statistique. L'application inclut également des fonctionnalités de recherche, d'import/export de données et une interface d'authentification sécurisée.
 
+
 ## Technologies utilisées
 
 - Java 17
@@ -164,7 +165,7 @@ src/
 │       ├── static/
 │       └── application.properties
 └── test/
-```bash
+
 
 (https://github.com/user-attachments/assets/356a1883-6f8e-472f-9862-0dcd9ec7cce3)
 
