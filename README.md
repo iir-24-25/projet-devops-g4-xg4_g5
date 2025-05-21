@@ -104,7 +104,7 @@ La métrique up confirme que l’instance pharma-app est bien surveillée.
 
 Exemple de métrique visible: ![t](https://github.com/user-attachments/assets/24ca9643-d061-480f-8433-cb5777db8770)
 
-    Visualisation des performances
+Visualisation des performances
 Des tableaux de bord personnalisés ont été créés dans Grafana pour suivre les métriques clés :
 
 Latence moyenne des requêtes HTTP
@@ -113,7 +113,7 @@ Taux de requêtes par code de statut (2xx, 4xx, 5xx)
 
 Nombre total de requêtes sur une période donnée
 
-    Utilisation de la fonction rate()
+Utilisation de la fonction rate()
 Les compteurs comme http_server_requests_seconds_count sont monotones (toujours croissants). Pour extraire des données exploitables, on utilise rate() afin d’obtenir la variation du compteur dans un intervalle :
 
 ## Bonnes pratiques appliquées
