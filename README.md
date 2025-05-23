@@ -174,18 +174,31 @@ mvn test
 
 ---
 ## Structure du projet
+
 src/
+
 ├── main/
+
 │   ├── java/org/example/pharma/
+
 │   │   ├── controllers/
+
 │   │   ├── services/
+
 │   │   ├── models/
+
 │   │   ├── repositories/
+
 │   │   └── PharmaApplication.java
+
 │   └── resources/
+
 │       ├── templates/
+
 │       ├── static/
+
 │       └── application.properties
+
 └── test/
 
 ![ar](https://github.com/user-attachments/assets/a775b461-fd46-4a8c-a132-210713895cfa)
