@@ -1,3 +1,134 @@
+
+
+version: '3.8'
+
+services:
+  pharma-app:
+    image: pharma-app:latest
+    build:
+      context: .
+    ports:
+      - "8081:8080"
+    depends_on:
+      - pharma-db
+      - logstash  # Ajout de la dépendance
+    environment:
+      - DB_HOST=pharma-db
+      - DB_USER=root
+      - DB_PASSWORD=pharma123
+      - DB_NAME=pharmacy_db
+      - SPRING_PROFILES_ACTIVE=prod
+      - LOGSTASH_HOST=logstash  # Pour l'envoi des logs
+
+  pharma-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: pharma123
+      MYSQL_DATABASE: pharmacy_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - pharma-db-data:/var/lib/mysql
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.14
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false  # Désactivation de la sécurité pour simplifier
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # Configuration mémoire
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.14
+    container_name: logstash
+    volumes:
+      - ./logstash-config:/usr/share/logstash/config  # Configuration Logstash
+      - ./logstash-pipeline:/usr/share/logstash/pipeline  # Pipelines
+    ports:
+      - "5044:5044"
+      - "5000:5000"  # Port pour recevoir les logs de l'application
+    depends_on:
+      - elasticsearch
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m  # Configuration mémoire
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.14
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+volumes:
+  pharma-db-data:
+    driver: local
+  esdata:
+    driver: local
+##version: '3.8'
+##
+##services:
+##  pharma-app:
+##    image: pharma-app:latest
+##    build:
+##      context: .
+##    ports:
+##      - "8081:8080"  # Changer le port externe
+##    depends_on:
+##      - pharma-db
+##    environment:
+##      - DB_HOST=pharma-db
+##      - DB_USER=root
+##      - DB_PASSWORD=
+##      - DB_NAME=pharmacy_db
+##
+##  pharma-db:
+##    image: mysql:5.7
+##    environment:
+##      MYSQL_ROOT_PASSWORD:
+##      MYSQL_DATABASE: pharmacy_db
+##    ports:
+##      - "3307:3306"
+##    volumes:
+##      - pharma-db-data:/var/lib/mysql
+##
+##  prometheus:
+##    image: prom/prometheus
+##    volumes:
+##      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+##    ports:
+##      - "9090:9090"
+##
+##  grafana:
+##    image: grafana/grafana
+##    ports:
+##      - "3000:3000"
+##    depends_on:
+##      - prometheus
+##
+##volumes:
+##  pharma-db-data:
+##    driver: local
 #version: '3.8'
 #
 #services:
@@ -6,19 +137,19 @@
 #    build:
 #      context: .
 #    ports:
-#      - "8081:8080"  # Changer le port externe
+#      - "8081:8080"
 #    depends_on:
 #      - pharma-db
 #    environment:
 #      - DB_HOST=pharma-db
 #      - DB_USER=root
-#      - DB_PASSWORD=
+#      - DB_PASSWORD=pharma123
 #      - DB_NAME=pharmacy_db
 #
 #  pharma-db:
 #    image: mysql:5.7
 #    environment:
-#      MYSQL_ROOT_PASSWORD:
+#      MYSQL_ROOT_PASSWORD: pharma123
 #      MYSQL_DATABASE: pharmacy_db
 #    ports:
 #      - "3307:3306"
@@ -39,6 +170,39 @@
 #    depends_on:
 #      - prometheus
 #
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+#    container_name: elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#    ports:
+#      - "9200:9200"
+#    volumes:
+#      - esdata:/usr/share/elasticsearch/data
+#
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:8.11.1
+#    container_name: logstash
+#    volumes:
+#      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+#    ports:
+#      - "5044:5044"
+#    depends_on:
+#      - elasticsearch
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.11.1
+#    container_name: kibana
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+#    depends_on:
+#      - elasticsearch
+#
 #volumes:
 #  pharma-db-data:
+#    driver: local
+#  esdata:
 #    driver: local

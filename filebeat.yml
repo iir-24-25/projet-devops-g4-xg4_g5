@@ -1,0 +1,8 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /chemin/vers/tes/logs/pharma-app/*.log
+
+output.logstash:
+  hosts: ["localhost:5044"]

@@ -27,7 +27,13 @@ public class UserService {
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()));
     }
 
+
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public UserService() {
+        System.out.println(" UserService instancié");
     }
 }

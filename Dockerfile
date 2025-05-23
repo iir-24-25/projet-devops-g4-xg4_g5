@@ -12,3 +12,8 @@
 #
 ## Commande pour exécuter l'application
 #ENTRYPOINT ["java", "-jar", "pharma.jar"]
+FROM openjdk:17-jdk-slim
+VOLUME /tmp
+ARG JAR_FILE=target/pharma-app.jar
+COPY target/pharma-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]

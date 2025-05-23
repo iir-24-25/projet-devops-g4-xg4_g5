@@ -3,59 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Médicaments</title>
+    <title>PharmaGest - À propos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary-black: #0A1F44;        /* Bleu profond pour contraste */
+            --secondary-black: #123D6C;      /* Bleu foncé adouci */
+            --primary-yellow: #5AB2FF;       /* Bleu clair lumineux */
+            --secondary-yellow: #A0D8FF;     /* Bleu très clair (teinte pastel) */
+            --primary-white: #FFFFFF;
+            --secondary-white: #F0F8FF;      /* Bleu très pâle, remplace le blanc cassé */
+        }
+
+
         body {
             display: flex;
             min-height: 100vh;
-            background-color: #f8f9fa;
+            background-color: var(--secondary-white);
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         /* Sidebar styles */
         .sidebar {
             width: 250px;
-            background: #343a40;
-            color: white;
+            background: var(--primary-black);
+            color: var(--primary-white);
             min-height: 100vh;
             transition: all 0.3s;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            overflow-y: auto;
         }
 
         .sidebar-header {
             padding: 20px;
-            background: #2c3136;
+            background: var(--secondary-black);
+            border-bottom: 3px solid var(--primary-yellow);
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-yellow);
         }
 
         .sidebar-menu {
             padding: 0;
             list-style: none;
+            margin: 0;
         }
 
         .sidebar-menu li {
-            padding: 10px 20px;
-            border-bottom: 1px solid #4b545c;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s;
             cursor: pointer;
         }
 
-        .sidebar-menu li:hover {
-            background: #4b545c;
-        }
-
         .sidebar-menu li a {
-            color: #ced4da;
+            color: var(--primary-white);
             text-decoration: none;
             display: block;
+            padding: 15px 20px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li:hover {
+            background: var(--secondary-black);
+        }
+
+        .sidebar-menu li:hover a {
+            padding-left: 25px;
+            color: var(--primary-yellow);
         }
 
         .sidebar-menu li.active {
-            background: #007bff;
+            background: var(--secondary-black);
+            border-left: 4px solid var(--primary-yellow);
         }
 
         .sidebar-menu li.active a {
-            color: white;
+            color: var(--primary-yellow);
         }
 
         .sidebar-menu li a i {
@@ -65,108 +96,257 @@
         /* Main content styles */
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 30px;
+            margin-left: 250px;
+            background-color: var(--primary-white);
+            min-height: 100vh;
         }
 
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: none;
-        }
-
-        .show-form {
-            display: block !important;
-        }
-
-        .table-container, .stats-container {
-            margin-top: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .form-section {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .form-section h5 {
-            color: #0d6efd;
-        }
-
-        .search-container {
-            margin-bottom: 20px;
-        }
-
-        #add-medicament-btn {
-            margin-bottom: 20px;
-        }
-
-        /* Pagination styles */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        /* Stats styles */
-        .chart-container {
+        .about-header {
+            margin-bottom: 40px;
+            text-align: center;
             position: relative;
-            height: 300px;
+        }
+
+        .about-header h1 {
+            color: var(--primary-black);
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-header h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary-yellow);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .about-content {
+            margin-bottom: 50px;
+        }
+
+        .about-section {
+            background: var(--secondary-white);
+            border-radius: 10px;
+            padding: 30px;
             margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--primary-yellow);
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .about-section h2 {
+            color: var(--primary-black);
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .about-section p {
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 20px;
         }
 
-        .stat-card h4 {
-            color: #0d6efd;
+        .feature-box {
+            background: var(--primary-white);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-box i {
+            font-size: 2.5rem;
+            color: var(--primary-yellow);
             margin-bottom: 15px;
         }
 
-        .stat-value {
-            font-size: 2rem;
+        .feature-box h3 {
+            color: var(--primary-black);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-box p {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .team-member {
+            background: var(--primary-white);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-yellow);
+            margin: 0 auto 20px;
+        }
+
+        .team-member h3 {
+            color: var(--primary-black);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .team-member p {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .social-links {
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            background: var(--primary-black);
+            color: var(--primary-white);
+            border-radius: 50%;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-yellow);
+            color: var(--primary-black);
+        }
+
+        .stats-box {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .stats-box .number {
+            font-size: 2.5rem;
             font-weight: bold;
+            color: var(--primary-yellow);
+            margin-bottom: 10px;
         }
 
-        .text-danger {
-            color: #dc3545;
+        .stats-box p {
+            color: var(--secondary-white);
+            font-size: 1rem;
         }
 
-        .text-warning {
-            color: #ffc107;
+        .contact-info {
+            margin-top: 15px;
         }
 
-        .text-success {
-            color: #28a745;
+        .contact-info i {
+            color: var(--primary-yellow);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background-color: var(--primary-yellow);
+            bottom: -10px;
+            left: 0;
+        }
+
+        footer {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .copyright span {
+            color: var(--primary-yellow);
         }
 
         /* Responsive styles */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
             .sidebar {
                 width: 100%;
                 min-height: auto;
+                position: relative;
+                height: auto;
+                z-index: 999;
             }
 
             .main-content {
-                padding: 15px;
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .sidebar-menu {
+                display: none;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .mobile-toggle {
+                display: block;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .sidebar-menu.show {
+                display: block;
+            }
+
+            .about-header h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -175,1072 +355,212 @@
 <!-- Sidebar -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <h3>PharmaGest</h3>
+        <div class="logo-text">PharmaGest</div>
     </div>
     <ul class="sidebar-menu">
-
-        <li onclick="showSection('dashboard')">
-            <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<!--        <li onclick="showSection('dashboard')">-->
+<!--            <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>-->
+<!--        </li>-->
+        <li class="active" onclick="showSection('about')">
+            <a href="#"><i class="bi bi-info-circle"></i> À propos</a>
         </li>
-
-        <li class="active" onclick="showSection('medicaments')">
-            <a href="#"><i class="bi bi-capsule"></i> Gérer les médicaments</a>
+        <li onclick="showSection('medicaments')">
+            <a href="medi.html"><i class="bi bi-capsule"></i> Gérer les médicaments</a>
         </li>
         <li onclick="window.location.href='frs.html'">
             <a href="#"><i class="bi bi-people"></i> Gérer les fournisseurs</a>
         </li>
-
-        <li onclick="showSection('statistiques')">
-            <a href="#"><i class="bi bi-graph-up"></i> Statistiques</a>
-        </li>
-<!--        <li onclick="window.location.href='users.html'">-->
-<!--            <a href="#"><i class="bi bi-people"></i> Gérer les utilisateurs</a>-->
+<!--        <li onclick="showSection('statistiques')">-->
+<!--            <a href="#"><i class="bi bi-graph-up"></i> Statistiques</a>-->
 <!--        </li>-->
         <li onclick="window.location.href='ventes.html'">
             <a href="#"><i class="bi bi-box-seam"></i> Gérer les Ventes</a>
         </li>
-<!--        <li onclick="window.location.href='achats.html'">-->
-<!--            <a href="#"><i class="bi bi-people"></i> Gérer les achats</a>-->
-<!--        </li>-->
         <li onclick="window.location.href='clients.html'">
-            <a href="#"><i class="bi bi-people"></i> gerer les clients</a>
+            <a href="#"><i class="bi bi-people"></i> Gérer les clients</a>
         </li>
-
         <li>
             <a href="/logout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
         </li>
     </ul>
 </div>
 
-<!-- Main Content -->
+<!-- Main content -->
 <div class="main-content">
-    <!-- Section Médicaments -->
-    <div id="medicaments-section">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>Gestion des Médicaments</h1>
-                <button id="add-medicament-btn" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Ajouter un médicament
-                </button>
+    <div id="about-section" class="about-content">
+        <div class="about-header">
+            <h1>À propos de PharmaGest</h1>
+            <p>Votre solution complète pour la gestion de pharmacie</p>
+        </div>
 
+        <div class="about-section">
+            <h2 class="section-title">Notre Histoire</h2>
+            <p>PharmaGest a été créé avec une vision claire: simplifier la gestion quotidienne des pharmacies et améliorer l'efficacité opérationnelle. Développé par une équipe de professionnels passionnés par la santé et la technologie, notre système est le fruit d'années de recherche et de collaboration avec des pharmaciens pour comprendre leurs besoins spécifiques.</p>
+            <p>Notre plateforme offre une solution intégrée pour gérer les médicaments, les fournisseurs, les ventes et les clients, le tout dans une interface intuitive et moderne. Nous sommes fiers de contribuer à l'amélioration des services pharmaceutiques en offrant des outils qui permettent aux pharmaciens de se concentrer davantage sur les soins aux patients.</p>
+        </div>
 
-
-            </div>
-
-            <!-- Formulaire d'ajout/modification -->
-            <div class="form-container card p-4">
-                <h2 id="form-title">Ajouter un Médicament</h2>
-                <form id="medicament-form">
-                    <input type="hidden" id="medicament-id">
-
-                    <div class="form-section">
-                        <h5>Informations de base</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="code-barre" class="form-label">Code barre</label>
-                                <input type="text" class="form-control" id="code-barre">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="nom" class="form-label">Nom commercial*</label>
-                                <input type="text" class="form-control" id="nom" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="dci" class="form-label">DCI</label>
-                                <input type="text" class="form-control" id="dci">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="laboratoire" class="form-label">Laboratoire</label>
-                                <input type="text" class="form-control" id="laboratoire">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h5>Caractéristiques</h5>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="dosage" class="form-label">Dosage</label>
-                                <input type="text" class="form-control" id="dosage">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="forme-galenique" class="form-label">Forme galénique</label>
-                                <select class="form-select" id="forme-galenique">
-                                    <option value="">Sélectionner</option>
-                                    <option value="Comprimé">Comprimé</option>
-                                    <option value="Gélule">Gélule</option>
-                                    <option value="Sirop">Sirop</option>
-                                    <option value="Injectable">Injectable</option>
-                                    <option value="Crème">Crème</option>
-                                    <option value="Pommade">Pommade</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="classe-therapeutique" class="form-label">Classe thérapeutique</label>
-                                <input type="text" class="form-control" id="classe-therapeutique">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h5>Prix et stock</h5>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="prix-achat" class="form-label">Prix d'achat*</label>
-                                <input type="number" step="0.01" class="form-control" id="prix-achat" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="prix-vente" class="form-label">Prix de vente*</label>
-                                <input type="number" step="0.01" class="form-control" id="prix-vente" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="taux-remboursement" class="form-label">Taux remboursement (%)</label>
-                                <input type="number" step="0.01" class="form-control" id="taux-remboursement" value="0">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="quantite-stock" class="form-label">Quantité en stock*</label>
-                                <input type="number" class="form-control" id="quantite-stock" required value="0">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="seuil-alerte" class="form-label">Seuil d'alerte</label>
-                                <input type="number" class="form-control" id="seuil-alerte" value="10">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h5>Autres informations</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="date-peremption" class="form-label">Date de péremption</label>
-                                <input type="date" class="form-control" id="date-peremption">
-                            </div>
-                            <div class="col-md-6 mb-3 d-flex align-items-end">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="prescription-requise">
-                                    <label class="form-check-label" for="prescription-requise">
-                                        Prescription requise
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" id="cancel-btn" class="btn btn-secondary me-md-2">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Liste des médicaments -->
-            <div class="table-container">
-                <div class="search-container">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="text" id="search-input" class="form-control" placeholder="Rechercher par nom..." onkeyup="handleSearchKeyUp(event)">
-                                <button class="btn btn-outline-secondary" type="button" onclick="searchMedicaments()">
-                                    <i class="bi bi-search"></i> Rechercher
-                                </button>
-                            </div>
-                        </div>
+        <div class="about-section">
+            <h2 class="section-title">Nos Fonctionnalités</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-capsule"></i>
+                        <h3>Gestion des Médicaments</h3>
+                        <p>Suivez votre inventaire, gérez les dates d'expiration et recevez des alertes pour les stocks faibles.</p>
                     </div>
                 </div>
-
-                <h2>Liste des Médicaments</h2>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>Code</th>
-                            <th>Nom</th>
-                            <th>DCI</th>
-                            <th>Forme</th>
-                            <th>Prix Vente</th>
-                            <th>Stock</th>
-                            <th>Péremption</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody id="medicaments-table">
-                        <!-- Les données seront ajoutées dynamiquement -->
-                        </tbody>
-                    </table>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-people"></i>
+                        <h3>Gestion des Fournisseurs</h3>
+                        <p>Maintenez une base de données de fournisseurs et optimisez vos relations commerciales.</p>
+                    </div>
                 </div>
-
-                <!-- Pagination -->
-                <div class="pagination-container">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination" id="pagination">
-                            <!-- La pagination sera générée dynamiquement -->
-                        </ul>
-                    </nav>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-box-seam"></i>
+                        <h3>Gestion des Ventes</h3>
+                        <p>Traitez les transactions rapidement et générez des rapports détaillés sur les ventes.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-graph-up"></i>
+                        <h3>Statistiques Avancées</h3>
+                        <p>Analysez les données de performance pour prendre des décisions éclairées.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-shield-check"></i>
+                        <h3>Sécurité Optimale</h3>
+                        <p>Protection des données confidentielles avec des mesures de sécurité avancées.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="bi bi-laptop"></i>
+                        <h3>Interface Intuitive</h3>
+                        <p>Navigation simple et expérience utilisateur optimisée pour tous les niveaux d'expertise.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Section Dashboard -->
-    <div id="dashboard-section" style="display: none;">
-        <div class="container-fluid">
-            <h1 class="mb-4">Tableau de Bord</h1>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4><i class="bi bi-capsule"></i> Médicaments en stock</h4>
-                    <div class="stat-value" id="total-medicaments">0</div>
+        <div class="about-section">
+            <h2 class="section-title">Nos Chiffres</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stats-box">
+                        <div class="number">500+</div>
+                        <p>Pharmacies Utilisatrices</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4><i class="bi bi-exclamation-triangle"></i> Médicaments en alerte</h4>
-                    <div class="stat-value text-danger" id="alert-medicaments">0</div>
+                <div class="col-md-3">
+                    <div class="stats-box">
+                        <div class="number">10,000+</div>
+                        <p>Médicaments Gérés</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4><i class="bi bi-calendar-x"></i> Péremption proche</h4>
-                    <div class="stat-value text-warning" id="expiring-medicaments">0</div>
+                <div class="col-md-3">
+                    <div class="stats-box">
+                        <div class="number">98%</div>
+                        <p>Taux de Satisfaction</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="chart-container">
-                <canvas id="stockChart"></canvas>
+                <div class="col-md-3">
+                    <div class="stats-box">
+                        <div class="number">24/7</div>
+                        <p>Support Technique</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Section Statistiques -->
-    <div id="statistiques-section" style="display: none;">
-        <div class="container-fluid">
-            <h1 class="mb-4">Statistiques des Médicaments</h1>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4><i class="bi bi-exclamation-triangle"></i> Médicaments en alerte</h4>
-                    <div class="stat-value text-danger" id="stats-alert-medicaments">0</div>
+        <div class="about-section">
+            <h2 class="section-title">Notre Équipe</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="team-member">
+                        <h3>Jean Dupont</h3>
+                        <p>Fondateur & CEO</p>
+                        <p>Expert en systèmes de gestion pharmaceutique avec plus de 15 ans d'expérience dans le secteur.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-envelope"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4><i class="bi bi-arrow-up-circle"></i> Médicaments les plus stockés</h4>
-                    <div class="stat-value text-success" id="top-stock-medicaments">0</div>
+                <div class="col-md-4">
+                    <div class="team-member">
+                        <h3>Marie Laurent</h3>
+                        <p>Directrice Technique</p>
+                        <p>Développeuse principale avec une expertise en solutions logicielles pour le secteur de la santé.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-envelope"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4><i class="bi bi-cash-stack"></i> Valeur totale du stock</h4>
-                    <div class="stat-value" id="total-stock-value">0 €</div>
+                <div class="col-md-4">
+                    <div class="team-member">
+                        <h3>Thomas Moreau</h3>
+                        <p>Responsable Support</p>
+                        <p>Dédié à offrir un service client exceptionnel et des solutions rapides aux problèmes techniques.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-envelope"></i></a>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="about-section">
+            <h2 class="section-title">Contactez-nous</h2>
+            <p>Vous avez des questions ou besoin d'assistance? Notre équipe est là pour vous aider.</p>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="chart-container">
-                        <canvas id="alertChart"></canvas>
+                    <div class="contact-info">
+                        <p><i class="bi bi-geo-alt"></i> 123 Avenue de la Santé, 75000 Paris, France</p>
+                        <p><i class="bi bi-telephone"></i> +33 1 23 45 67 89</p>
+                        <p><i class="bi bi-envelope"></i> contact@pharmagest.com</p>
+                        <p><i class="bi bi-clock"></i> Lundi - Vendredi: 9h00 - 18h00</p>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="chart-container">
-                        <canvas id="formeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <canvas id="peremptionChart"></canvas>
-            </div>
-
-            <div class="table-container mt-4">
-                <h3>Médicaments en alerte de stock</h3>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>Nom</th>
-                            <th>Stock actuel</th>
-                            <th>Seuil d'alerte</th>
-                            <th>Déficit</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody id="alert-medicaments-table">
-                        <!-- Les données seront ajoutées dynamiquement -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Autres sections (vides pour l'exemple) -->
-<!--    <div id="utilisateurs-section" style="display: none;">-->
-<!--        <div class="container-fluid">-->
-<!--            <h1>Gestion des Utilisateurs</h1>-->
-<!--            <p>Section en construction...</p>-->
-<!--        </div>-->
-<!--    </div>-->
-
-    <div id="inventaire-section" style="display: none;">
-        <div class="container-fluid">
-            <h1>gerer les ventes </h1>
-        </div>
-    </div>
-
-
-<!--    <div id="parametres-section" style="display: none;">-->
-<!--        <div class="container-fluid">-->
-<!--            <h1>gérer les achats</h1>-->
-<!--            <p>Section en construction...</p>-->
-<!--        </div>-->
-<!--    </div>-->
+    <footer>
+        <p>PharmaGest &copy; 2025 - Tous droits réservés</p>
+        <p class="copyright">Conçu avec <span>❤</span> pour les professionnels de la santé</p>
+    </footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Données simulées pour les médicaments
-    let medicamentsData = [
-        {
-            id: 1,
-            codeBarre: "123456789",
-            nom: "Doliprane",
-            dci: "Paracétamol",
-            dosage: "500mg",
-            formeGalenique: "Comprimé",
-            classeTherapeutique: "Antalgique",
-            laboratoire: "Sanofi",
-            prixAchat: 2.5,
-            prixVente: 5.0,
-            tauxRemboursement: 65,
-            quantiteStock: 5,
-            seuilAlerte: 10,
-            datePeremption: "2024-12-31",
-            prescriptionRequise: false
-        },
-        {
-            id: 2,
-            codeBarre: "987654321",
-            nom: "Ibuprofène",
-            dci: "Ibuprofène",
-            dosage: "200mg",
-            formeGalenique: "Gélule",
-            classeTherapeutique: "Anti-inflammatoire",
-            laboratoire: "Bayer",
-            prixAchat: 3.0,
-            prixVente: 6.5,
-            tauxRemboursement: 30,
-            quantiteStock: 25,
-            seuilAlerte: 5,
-            datePeremption: "2025-06-30",
-            prescriptionRequise: false
-        },
-        {
-            id: 3,
-            codeBarre: "456789123",
-            nom: "Amoxicilline",
-            dci: "Amoxicilline",
-            dosage: "1g",
-            formeGalenique: "Comprimé",
-            classeTherapeutique: "Antibiotique",
-            laboratoire: "GSK",
-            prixAchat: 4.5,
-            prixVente: 9.0,
-            tauxRemboursement: 100,
-            quantiteStock: 15,
-            seuilAlerte: 5,
-            datePeremption: "2023-11-15",
-            prescriptionRequise: true
-        },
-        {
-            id: 4,
-            codeBarre: "321654987",
-            nom: "Voltarene",
-            dci: "Diclofénac",
-            dosage: "50mg",
-            formeGalenique: "Gélule",
-            classeTherapeutique: "Anti-inflammatoire",
-            laboratoire: "Novartis",
-            prixAchat: 5.0,
-            prixVente: 10.0,
-            tauxRemboursement: 65,
-            quantiteStock: 8,
-            seuilAlerte: 5,
-            datePeremption: "2025-03-31",
-            prescriptionRequise: true
-        },
-        {
-            id: 5,
-            codeBarre: "789123456",
-            nom: "Smecta",
-            dci: "Diosmectite",
-            dosage: "3g",
-            formeGalenique: "Sachet",
-            classeTherapeutique: "Antidiarrhéique",
-            laboratoire: "Ipsen",
-            prixAchat: 2.0,
-            prixVente: 4.5,
-            tauxRemboursement: 35,
-            quantiteStock: 30,
-            seuilAlerte: 10,
-            datePeremption: "2025-01-31",
-            prescriptionRequise: false
-        },
-        {
-            id: 6,
-            codeBarre: "654987321",
-            nom: "Spasfon",
-            dci: "Phloroglucinol",
-            dosage: "80mg",
-            formeGalenique: "Comprimé",
-            classeTherapeutique: "Antispasmodique",
-            laboratoire: "Teva",
-            prixAchat: 3.5,
-            prixVente: 7.0,
-            tauxRemboursement: 65,
-            quantiteStock: 2,
-            seuilAlerte: 5,
-            datePeremption: "2024-11-30",
-            prescriptionRequise: false
-        }
-    ];
+    function showSection(sectionId) {
+        // Cette fonction serait utilisée pour naviguer entre les sections
+        // Pour l'instant, nous avons juste la section "À propos"
+        console.log("Navigation vers: " + sectionId);
+    }
 
-    // Variables pour les graphiques
-    let stockChart, alertChart, formeChart, peremptionChart;
-
+    // Pour la version mobile
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('medicament-form');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const addBtn = document.getElementById('add-medicament-btn');
-        const formContainer = document.querySelector('.form-container');
-        let isEditing = false;
-        let currentEditId = null;
-
-        // Variables pour la pagination
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let filteredMedicaments = [...medicamentsData];
-
-        // Charger les médicaments au démarrage
-        loadMedicaments();
-        updateStats();
-
-        // Gestion de l'affichage du formulaire
-        addBtn.addEventListener('click', function() {
-            resetForm();
-            formContainer.classList.add('show-form');
-            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Gestion de la soumission du formulaire
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const medicament = {
-                codeBarre: document.getElementById('code-barre').value,
-                nom: document.getElementById('nom').value,
-                dci: document.getElementById('dci').value,
-                dosage: document.getElementById('dosage').value,
-                formeGalenique: document.getElementById('forme-galenique').value,
-                classeTherapeutique: document.getElementById('classe-therapeutique').value,
-                laboratoire: document.getElementById('laboratoire').value,
-                prixAchat: parseFloat(document.getElementById('prix-achat').value),
-                prixVente: parseFloat(document.getElementById('prix-vente').value),
-                tauxRemboursement: parseFloat(document.getElementById('taux-remboursement').value),
-                quantiteStock: parseInt(document.getElementById('quantite-stock').value),
-                seuilAlerte: parseInt(document.getElementById('seuil-alerte').value),
-                datePeremption: document.getElementById('date-peremption').value,
-                prescriptionRequise: document.getElementById('prescription-requise').checked
-            };
-
-            if (isEditing) {
-                medicament.id = currentEditId;
-                updateMedicament(medicament);
-            } else {
-                addMedicament(medicament);
-            }
-        });
-
-        // Gestion de l'annulation de l'édition
-        cancelBtn.addEventListener('click', function() {
-            resetForm();
-        });
-
-        // Fonction pour charger les médicaments
-        function loadMedicaments(searchTerm = '') {
-            if (searchTerm) {
-                // Filtrer les médicaments par nom (insensible à la casse)
-                filteredMedicaments = medicamentsData.filter(med =>
-                    med.nom.toLowerCase().includes(searchTerm.toLowerCase()))
-            } else {
-                filteredMedicaments = [...medicamentsData];
-            }
-
-            updatePagination();
-            updateMedicamentsTable(getPaginatedData());
-        }
-
-        // Fonction pour gérer la touche Entrée dans la recherche
-        window.handleSearchKeyUp = function(event) {
-            if (event.key === 'Enter') {
-                searchMedicaments();
-            }
-        };
-
-        // Fonction pour effectuer la recherche
-        window.searchMedicaments = function() {
-            const searchTerm = document.getElementById('search-input').value;
-            currentPage = 1; // Reset à la première page lors d'une nouvelle recherche
-            loadMedicaments(searchTerm);
-        };
-
-        // Fonction pour obtenir les données paginées
-        function getPaginatedData() {
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            return filteredMedicaments.slice(startIndex, startIndex + itemsPerPage);
-        }
-
-        // Fonction pour mettre à jour la pagination
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredMedicaments.length / itemsPerPage);
-            const pagination = document.getElementById('pagination');
-
-            // Réinitialiser la pagination
-            pagination.innerHTML = '';
-
-            // Bouton Précédent
-            const prevItem = document.createElement('li');
-            prevItem.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-            prevItem.innerHTML = `
- <a class="page-link" href="#" aria-label="Previous" onclick="changePage(${currentPage - 1})">
- <span aria-hidden="true">&laquo;</span>
- </a>
- `;
-            pagination.appendChild(prevItem);
-
-            // Numéros de page
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            // Ajuster si nous sommes près de la fin
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-
-            // Premier bouton si nécessaire
-            if (startPage > 1) {
-                const firstItem = document.createElement('li');
-                firstItem.className = 'page-item';
-                firstItem.innerHTML = `<a class="page-link" href="#" onclick="changePage(1)">1</a>`;
-                pagination.appendChild(firstItem);
-
-                if (startPage > 2) {
-                    const ellipsisItem = document.createElement('li');
-                    ellipsisItem.className = 'page-item disabled';
-                    ellipsisItem.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisItem);
-                }
-            }
-
-            // Boutons des pages
-            for (let i = startPage; i <= endPage; i++) {
-                const pageItem = document.createElement('li');
-                pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                pageItem.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-                pagination.appendChild(pageItem);
-            }
-
-            // Dernier bouton si nécessaire
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsisItem = document.createElement('li');
-                    ellipsisItem.className = 'page-item disabled';
-                    ellipsisItem.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisItem);
-                }
-
-                const lastItem = document.createElement('li');
-                lastItem.className = 'page-item';
-                lastItem.innerHTML = `<a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a>`;
-                pagination.appendChild(lastItem);
-            }
-
-            // Bouton Suivant
-            const nextItem = document.createElement('li');
-            nextItem.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextItem.innerHTML = `
- <a class="page-link" href="#" aria-label="Next" onclick="changePage(${currentPage + 1})">
- <span aria-hidden="true">&raquo;</span>
- </a>
- `;
-            pagination.appendChild(nextItem);
-        }
-
-        // Fonction pour changer de page (exposée globalement)
-        window.changePage = function(page) {
-            if (page < 1 || page > Math.ceil(filteredMedicaments.length / itemsPerPage)) return;
-            currentPage = page;
-            updateMedicamentsTable(getPaginatedData());
-            updatePagination();
-        };
-
-        // Fonction pour mettre à jour le tableau des médicaments
-        function updateMedicamentsTable(medicaments) {
-            const tableBody = document.getElementById('medicaments-table');
-
-            if (!tableBody) {
-                console.error("L'élément 'medicaments-table' n'existe pas");
-                return;
-            }
-
-            tableBody.innerHTML = medicaments.map(med => `
- <tr>
- <td>${med.codeBarre || '-'}</td>
- <td>${med.nom}</td>
- <td>${med.dci || '-'}</td>
- <td>${med.formeGalenique || '-'}</td>
- <td>${med.prixVente.toFixed(2)} €</td>
- <td class="${med.quantiteStock <= med.seuilAlerte ? 'text-danger fw-bold' : ''}">
- ${med.quantiteStock}
- ${med.quantiteStock <= med.seuilAlerte ? ' (Alerte)' : ''}
- </td>
- <td class="${isExpiringSoon(med.datePeremption) ? 'text-warning fw-bold' : ''}">
- ${med.datePeremption ? formatDate(med.datePeremption) : '-'}
- ${isExpiringSoon(med.datePeremption) ? ' (Péremption proche)' : ''}
- </td>
- <td>
- <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
- <i class="bi bi-pencil"></i> Modifier
- </button>
- <button class="btn btn-sm btn-danger delete-btn" data-id="${med.id}">
- <i class="bi bi-trash"></i> Supprimer
- </button>
- </td>
- </tr>
- `).join('');
-
-            // Ajouter les événements aux boutons
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editMedicament(this.getAttribute('data-id'));
-                });
-            });
-
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    deleteMedicament(this.getAttribute('data-id'));
-                });
-            });
-        }
-
-        // Fonction pour vérifier si un médicament est bientôt périmé (dans les 30 jours)
-        function isExpiringSoon(dateString) {
-            if (!dateString) return false;
-
-            const today = new Date();
-            const peremptionDate = new Date(dateString);
-            const diffTime = peremptionDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            return diffDays <= 30 && diffDays >= 0;
-        }
-
-        // Fonction pour formater la date
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Date(dateString).toLocaleDateString('fr-FR', options);
-        }
-
-        // Fonction pour ajouter un médicament
-        function addMedicament(medicament) {
-            // Générer un nouvel ID
-            const newId = medicamentsData.length > 0 ?
-                Math.max(...medicamentsData.map(m => m.id)) + 1 : 1;
-
-            medicament.id = newId;
-            medicamentsData.unshift(medicament); // Ajouter au début du tableau
-
-            resetForm();
-            loadMedicaments();
-            updateStats();
-            alert('Médicament ajouté avec succès!');
-        }
-
-        // Fonction pour mettre à jour un médicament
-        function updateMedicament(medicament) {
-            const index = medicamentsData.findIndex(m => m.id === medicament.id);
-            if (index !== -1) {
-                medicamentsData[index] = medicament;
-            }
-
-            resetForm();
-            loadMedicaments();
-            updateStats();
-            alert('Médicament mis à jour avec succès!');
-        }
-
-        // Fonction pour supprimer un médicament
-        function deleteMedicament(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce médicament?')) {
-                medicamentsData = medicamentsData.filter(m => m.id !== parseInt(id));
-                loadMedicaments();
-                updateStats();
-                alert('Médicament supprimé avec succès!');
-            }
-        }
-
-        // Fonction pour éditer un médicament
-        function editMedicament(id) {
-            const medicament = medicamentsData.find(m => m.id === parseInt(id));
-
-            if (!medicament) {
-                alert('Médicament non trouvé');
-                return;
-            }
-
-            document.getElementById('medicament-id').value = medicament.id;
-            document.getElementById('code-barre').value = medicament.codeBarre || '';
-            document.getElementById('nom').value = medicament.nom;
-            document.getElementById('dci').value = medicament.dci || '';
-            document.getElementById('dosage').value = medicament.dosage || '';
-            document.getElementById('forme-galenique').value = medicament.formeGalenique || '';
-            document.getElementById('classe-therapeutique').value = medicament.classeTherapeutique || '';
-            document.getElementById('laboratoire').value = medicament.laboratoire || '';
-            document.getElementById('prix-achat').value = medicament.prixAchat;
-            document.getElementById('prix-vente').value = medicament.prixVente;
-            document.getElementById('taux-remboursement').value = medicament.tauxRemboursement;
-            document.getElementById('quantite-stock').value = medicament.quantiteStock;
-            document.getElementById('seuil-alerte').value = medicament.seuilAlerte;
-            document.getElementById('date-peremption').value = medicament.datePeremption ? medicament.datePeremption.split('T')[0] : '';
-            document.getElementById('prescription-requise').checked = medicament.prescriptionRequise;
-
-            document.getElementById('form-title').textContent = 'Modifier Médicament';
-            cancelBtn.style.display = 'inline-block';
-            isEditing = true;
-            currentEditId = medicament.id;
-
-            // Afficher le formulaire
-            formContainer.classList.add('show-form');
-            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Fonction pour réinitialiser le formulaire
-        function resetForm() {
-            form.reset();
-            formContainer.classList.remove('show-form');
-            document.getElementById('form-title').textContent = 'Ajouter un Médicament';
-            cancelBtn.style.display = 'none';
-            isEditing = false;
-            currentEditId = null;
-            document.getElementById('taux-remboursement').value = '0';
-            document.getElementById('quantite-stock').value = '0';
-            document.getElementById('seuil-alerte').value = '10';
-        }
-
-        // Fonction pour basculer entre les sections
-        window.showSection = function(sectionId) {
-            // Masquer toutes les sections
-            document.querySelectorAll('.main-content > div').forEach(div => {
-                div.style.display = 'none';
-            });
-
-            // Afficher la section sélectionnée
-            document.getElementById(`${sectionId}-section`).style.display = 'block';
-
-            // Mettre à jour le menu actif
-            document.querySelectorAll('.sidebar-menu li').forEach(li => {
-                li.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-
-            // Si c'est la section statistiques, mettre à jour les graphiques
-            if (sectionId === 'statistiques') {
-                updateStats();
-                updateCharts();
-            } else if (sectionId === 'dashboard') {
-                updateStats();
-                updateDashboardCharts();
-            }
-        };
-
-        // Fonction pour mettre à jour les statistiques
-        function updateStats() {
-            // Calculer les statistiques
-            const totalMedicaments = medicamentsData.length;
-            const alertMedicaments = medicamentsData.filter(m => m.quantiteStock <= m.seuilAlerte).length;
-            const expiringMedicaments = medicamentsData.filter(m => isExpiringSoon(m.datePeremption)).length;
-
-            // Médicament le plus stocké
-            const mostStocked = medicamentsData.reduce((max, med) =>
-                med.quantiteStock > max.quantiteStock ? med : max, medicamentsData[0]);
-
-            // Valeur totale du stock
-            const totalStockValue = medicamentsData.reduce((sum, med) =>
-                sum + (med.quantiteStock * med.prixAchat), 0);
-
-            // Mettre à jour les indicateurs
-            document.getElementById('total-medicaments').textContent = totalMedicaments;
-            document.getElementById('alert-medicaments').textContent = alertMedicaments;
-            document.getElementById('expiring-medicaments').textContent = expiringMedicaments;
-
-            document.getElementById('stats-alert-medicaments').textContent = alertMedicaments;
-            document.getElementById('top-stock-medicaments').textContent = `${mostStocked.nom} (${mostStocked.quantiteStock})`;
-            document.getElementById('total-stock-value').textContent = `${totalStockValue.toFixed(2)} €`;
-
-            // Mettre à jour le tableau des médicaments en alerte
-            updateAlertMedicamentsTable();
-        }
-
-        // Fonction pour mettre à jour le tableau des médicaments en alerte
-        function updateAlertMedicamentsTable() {
-            const alertMedicaments = medicamentsData.filter(m => m.quantiteStock <= m.seuilAlerte);
-            const tableBody = document.getElementById('alert-medicaments-table');
-
-            tableBody.innerHTML = alertMedicaments.map(med => `
- <tr>
- <td>${med.nom}</td>
- <td class="text-danger fw-bold">${med.quantiteStock}</td>
- <td>${med.seuilAlerte}</td>
- <td class="text-danger fw-bold">${med.seuilAlerte - med.quantiteStock}</td>
- <td>
- <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${med.id}">
- <i class="bi bi-pencil"></i> Modifier
- </button>
- </td>
- </tr>
- `).join('');
-
-            // Ajouter les événements aux boutons
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editMedicament(this.getAttribute('data-id'));
-                    showSection('medicaments');
-                });
-            });
-        }
-
-        // Fonction pour mettre à jour les graphiques du dashboard
-        function updateDashboardCharts() {
-            // Détruire les anciens graphiques s'ils existent
-            if (stockChart) {
-                stockChart.destroy();
-            }
-
-            // Données pour le graphique de stock
-            const ctx = document.getElementById('stockChart').getContext('2d');
-
-            // Préparer les données
-            const labels = medicamentsData.map(med => med.nom);
-            const stockData = medicamentsData.map(med => med.quantiteStock);
-            const alertThresholds = medicamentsData.map(med => med.seuilAlerte);
-
-            stockChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Stock actuel',
-                            data: stockData,
-                            backgroundColor: medicamentsData.map(med =>
-                                med.quantiteStock <= med.seuilAlerte ? 'rgba(220, 53, 69, 0.7)' : 'rgba(40, 167, 69, 0.7)'
-                            ),
-                            borderColor: medicamentsData.map(med =>
-                                med.quantiteStock <= med.seuilAlerte ? 'rgba(220, 53, 69, 1)' : 'rgba(40, 167, 69, 1)'
-                            ),
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Seuil d\'alerte',
-                            data: alertThresholds,
-                            type: 'line',
-                            borderColor: 'rgba(255, 193, 7, 1)',
-                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 0
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Quantité'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Niveaux de stock des médicaments'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                afterLabel: function(context) {
-                                    const med = medicamentsData[context.dataIndex];
-                                    return `Seuil d'alerte: ${med.seuilAlerte}`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Fonction pour mettre à jour les graphiques des statistiques
-        function updateCharts() {
-            // Détruire les anciens graphiques s'ils existent
-            if (alertChart) alertChart.destroy();
-            if (formeChart) formeChart.destroy();
-            if (peremptionChart) peremptionChart.destroy();
-
-            // 1. Graphique des médicaments en alerte
-            const alertCtx = document.getElementById('alertChart').getContext('2d');
-
-            const alertStatus = {
-                normal: medicamentsData.filter(m => m.quantiteStock > m.seuilAlerte).length,
-                alerte: medicamentsData.filter(m => m.quantiteStock <= m.seuilAlerte).length
-            };
-
-            alertChart = new Chart(alertCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Stock normal', 'En alerte'],
-                    datasets: [{
-                        data: [alertStatus.normal, alertStatus.alerte],
-                        backgroundColor: [
-                            'rgba(40, 167, 69, 0.7)',
-                            'rgba(220, 53, 69, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(220, 53, 69, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Médicaments en alerte de stock'
-                        }
-                    }
-                }
-            });
-
-            // 2. Graphique des formes galéniques
-            const formeCtx = document.getElementById('formeChart').getContext('2d');
-
-            const formes = {};
-            medicamentsData.forEach(med => {
-                if (med.formeGalenique) {
-                    formes[med.formeGalenique] = (formes[med.formeGalenique] || 0) + 1;
-                }
-            });
-
-            formeChart = new Chart(formeCtx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(formes),
-                    datasets: [{
-                        data: Object.values(formes),
-                        backgroundColor: [
-                            'rgba(13, 110, 253, 0.7)',
-                            'rgba(111, 66, 193, 0.7)',
-                            'rgba(214, 51, 132, 0.7)',
-                            'rgba(253, 126, 20, 0.7)',
-                            'rgba(25, 135, 84, 0.7)',
-                            'rgba(32, 201, 151, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(13, 110, 253, 1)',
-                            'rgba(111, 66, 193, 1)',
-                            'rgba(214, 51, 132, 1)',
-                            'rgba(253, 126, 20, 1)',
-                            'rgba(25, 135, 84, 1)',
-                            'rgba(32, 201, 151, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Répartition par forme galénique'
-                        }
-                    }
-                }
-            });
-
-            // 3. Graphique des dates de péremption
-            const peremptionCtx = document.getElementById('peremptionChart').getContext('2d');
-
-            // Catégoriser les médicaments par statut de péremption
-            const today = new Date();
-            const peremptionStatus = {
-                expired: medicamentsData.filter(m => m.datePeremption && new Date(m.datePeremption) < today).length,
-                soon: medicamentsData.filter(m => m.datePeremption && isExpiringSoon(m.datePeremption)).length,
-                good: medicamentsData.filter(m => {
-                    if (!m.datePeremption) return false;
-                    const peremptionDate = new Date(m.datePeremption);
-                    const diffTime = peremptionDate - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    return diffDays > 30;
-                }).length,
-                noDate: medicamentsData.filter(m => !m.datePeremption).length
-            };
-
-            peremptionChart = new Chart(peremptionCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Périmés', 'Péremption proche (≤30j)', 'Valides (>30j)', 'Sans date'],
-                    datasets: [{
-                        label: 'Nombre de médicaments',
-                        data: [
-                            peremptionStatus.expired,
-                            peremptionStatus.soon,
-                            peremptionStatus.good,
-                            peremptionStatus.noDate
-                        ],
-                        backgroundColor: [
-                            'rgba(220, 53, 69, 0.7)',
-                            'rgba(255, 193, 7, 0.7)',
-                            'rgba(40, 167, 69, 0.7)',
-                            'rgba(108, 117, 125, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(220, 53, 69, 1)',
-                            'rgba(255, 193, 7, 1)',
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(108, 117, 125, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Nombre de médicaments'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Statut des dates de péremption'
-                        }
-                    }
-                }
+        if (window.innerWidth <= 768) {
+            const sidebar = document.querySelector('.sidebar');
+            const mobileToggle = document.createElement('div');
+            mobileToggle.className = 'mobile-toggle';
+            mobileToggle.innerHTML = '<i class="bi bi-list"></i>';
+
+            sidebar.querySelector('.sidebar-header').appendChild(mobileToggle);
+
+            mobileToggle.addEventListener('click', function() {
+                document.querySelector('.sidebar-menu').classList.toggle('show');
             });
         }
     });

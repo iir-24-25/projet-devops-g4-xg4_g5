@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Médicaments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-bottom: 50px;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .table th {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .table th:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table th i {
+            margin-left: 5px;
+            opacity: 0.5;
+        }
+
+        .table th.sorted-asc i::before {
+            content: "↑";
+        }
+
+        .table th.sorted-desc i::before {
+            content: "↓";
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: normal;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-content {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control, .form-select {
+            margin-bottom: 15px;
+        }
+
+        #searchInput, #filterForme, #filterClasse {
+            height: calc(1.5em + 1rem + 2px);
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .stat-card {
+            border-radius: 10px;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between {
+                flex-direction: column;
+            }
+
+            .d-flex.justify-content-between h1 {
+                margin-bottom: 15px;
+            }
+
+            .card-header.d-flex {
+                flex-direction: column;
+            }
+
+            .card-header.d-flex h5 {
+                margin-bottom: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card .value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">Gestion Pharma</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/medicaments">Médicaments</a>
+                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" href="ventes.html">Ventes</a>-->
+<!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-3">
+    <!-- Dashboard Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card bg-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="value" id="totalMedicaments">0</div>
+                        <div class="label">Médicaments</div>
+                    </div>
+                    <i class="bi bi-capsule"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="value" id="stockTotal">0</div>
+                        <div class="label">Stock Total</div>
+                    </div>
+                    <i class="bi bi-box-seam"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="value" id="alertesStock">0</div>
+                        <div class="label">Alertes Stock</div>
+                    </div>
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Médicaments Table Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestion des Médicaments</h1>
+        <div>
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addMedicamentModal">
+                <i class="bi bi-plus-circle"></i> Ajouter Médicament
+            </button>
+            <a href="/" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Liste des Médicaments</h5>
+            <div>
+                <button id="exportBtn" class="btn btn-success me-2">
+                    <i class="bi bi-download"></i> Exporter
+                </button>
+<!--                <button id="importBtn" class="btn btn-info">-->
+<!--                    <i class="bi bi-upload"></i> Importer-->
+<!--                </button>-->
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Rechercher...">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filterForme">
+                        <option value="">Toutes les formes</option>
+                        <option value="COMPRIME">Comprimé</option>
+                        <option value="GELULE">Gélule</option>
+                        <option value="SIROP">Sirop</option>
+                        <option value="POUDRE">Poudre</option>
+                        <option value="INJECTABLE">Injectable</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filterClasse">
+                        <option value="">Toutes les classes</option>
+                        <option value="ANTIBIOTIQUE">Antibiotique</option>
+                        <option value="ANTALGIQUE">Antalgique</option>
+                        <option value="ANTIINFLAMMATOIRE">Anti-inflammatoire</option>
+                        <option value="ANTIHISTAMINIQUE">Antihistaminique</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="medicamentsTable" class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th data-sort="id">ID <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="codeBarre">Code Barre <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="nom">Nom <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="dci">DCI <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="dosage">Dosage <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="formeGalenique">Forme <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="quantiteStock">Stock <i class="bi bi-arrow-down-up"></i></th>
+                        <th data-sort="prixVente">Prix <i class="bi bi-arrow-down-up"></i></th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="medicamentsTableBody">
+                    <!-- Les données seront ajoutées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajout/Modification -->
+<div class="modal fade" id="addMedicamentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Nouveau Médicament</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="medicamentForm">
+                    <input type="hidden" id="medicamentId">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="codeBarreInput" class="form-label">Code Barre</label>
+                            <input type="text" class="form-control" id="codeBarreInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nomInput" class="form-label">Nom Commercial</label>
+                            <input type="text" class="form-control" id="nomInput" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="dciInput" class="form-label">DCI</label>
+                            <input type="text" class="form-control" id="dciInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dosageInput" class="form-label">Dosage</label>
+                            <input type="text" class="form-control" id="dosageInput" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="formeInput" class="form-label">Forme Galénique</label>
+                            <select class="form-select" id="formeInput" required>
+                                <option value="COMPRIME">Comprimé</option>
+                                <option value="GELULE">Gélule</option>
+                                <option value="SIROP">Sirop</option>
+                                <option value="POUDRE">Poudre</option>
+                                <option value="INJECTABLE">Injectable</option>
+                                <option value="POMMADE">Pommade</option>
+                                <option value="CREME">Crème</option>
+                                <option value="SOLUTION">Solution</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="classeInput" class="form-label">Classe Thérapeutique</label>
+                            <input type="text" class="form-control" id="classeInput" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="laboratoireInput" class="form-label">Laboratoire</label>
+                            <input type="text" class="form-control" id="laboratoireInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="prescriptionInput" class="form-label">Prescription Requise</label>
+                            <select class="form-select" id="prescriptionInput" required>
+                                <option value="true">Oui</option>
+                                <option value="false">Non</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="prixAchatInput" class="form-label">Prix d'Achat (€)</label>
+                            <input type="number" step="0.01" class="form-control" id="prixAchatInput" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="prixVenteInput" class="form-label">Prix de Vente (€)</label>
+                            <input type="number" step="0.01" class="form-control" id="prixVenteInput" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tauxRemboursementInput" class="form-label">Taux Remboursement (%)</label>
+                            <input type="number" step="0.01" class="form-control" id="tauxRemboursementInput" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="quantiteStockInput" class="form-label">Quantité en Stock</label>
+                            <input type="number" class="form-control" id="quantiteStockInput" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="seuilAlerteInput" class="form-label">Seuil d'Alerte</label>
+                            <input type="number" class="form-control" id="seuilAlerteInput" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="datePeremptionInput" class="form-label">Date de Péremption</label>
+                            <input type="date" class="form-control" id="datePeremptionInput" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="saveMedicamentBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importer des médicaments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Fichier CSV/Excel</label>
+                        <input class="form-control" type="file" id="importFile" accept=".csv,.xlsx,.xls">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmImportBtn">Importer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation des éléments
+        const medicamentForm = document.getElementById('medicamentForm');
+        const medicamentsTableBody = document.getElementById('medicamentsTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const filterForme = document.getElementById('filterForme');
+        const filterClasse = document.getElementById('filterClasse');
+        const saveMedicamentBtn = document.getElementById('saveMedicamentBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const confirmImportBtn = document.getElementById('confirmImportBtn');
+        const addMedicamentModal = new bootstrap.Modal(document.getElementById('addMedicamentModal'));
+        const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+
+        // Dashboard elements
+        const totalMedicamentsElement = document.getElementById('totalMedicaments');
+        const stockTotalElement = document.getElementById('stockTotal');
+        const alertesStockElement = document.getElementById('alertesStock');
+
+        let currentSort = { column: 'id', direction: 'asc' };
+        let medicamentsData = [];
+
+        // Charger tous les médicaments au démarrage
+        fetchMedicaments();
+
+        // Gestion de la soumission du formulaire
+        saveMedicamentBtn.addEventListener('click', function() {
+            const medicamentId = document.getElementById('medicamentId').value;
+            const medicamentData = {
+                codeBarre: document.getElementById('codeBarreInput').value,
+                nom: document.getElementById('nomInput').value,
+                dci: document.getElementById('dciInput').value,
+                dosage: document.getElementById('dosageInput').value,
+                formeGalenique: document.getElementById('formeInput').value,
+                classeTherapeutique: document.getElementById('classeInput').value,
+                laboratoire: document.getElementById('laboratoireInput').value,
+                prixAchat: parseFloat(document.getElementById('prixAchatInput').value),
+                prixVente: parseFloat(document.getElementById('prixVenteInput').value),
+                tauxRemboursement: parseFloat(document.getElementById('tauxRemboursementInput').value),
+                quantiteStock: parseInt(document.getElementById('quantiteStockInput').value),
+                seuilAlerte: parseInt(document.getElementById('seuilAlerteInput').value),
+                datePeremption: document.getElementById('datePeremptionInput').value,
+                prescriptionRequise: document.getElementById('prescriptionInput').value === 'true'
+            };
+
+            const method = medicamentId ? 'PUT' : 'POST';
+            const url = medicamentId ? `/api/medicaments/${medicamentId}` : '/api/medicaments';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(medicamentData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    fetchMedicaments();
+                    addMedicamentModal.hide();
+                    medicamentForm.reset();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // Recherche et filtrage
+        searchInput.addEventListener('input', applyFilters);
+        filterForme.addEventListener('change', applyFilters);
+        filterClasse.addEventListener('change', applyFilters);
+
+        // Tri des colonnes
+        document.querySelectorAll('th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-sort');
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                applyFilters();
+            });
+        });
+
+        // Export des données
+        exportBtn.addEventListener('click', exportData);
+
+        // Import des données
+        importBtn.addEventListener('click', () => importModal.show());
+        confirmImportBtn.addEventListener('click', importData);
+
+        // Fonction pour charger les médicaments
+        function fetchMedicaments() {
+            fetch('/api/medicaments')
+                .then(response => response.json())
+                .then(data => {
+                    medicamentsData = data;
+                    applyFilters();
+                    updateDashboard(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Mettre à jour le dashboard
+        function updateDashboard(medicaments) {
+            // Total des médicaments
+            totalMedicamentsElement.textContent = medicaments.length;
+
+            // Stock total
+            const stock = medicaments.reduce((sum, m) => sum + m.quantiteStock, 0);
+            stockTotalElement.textContent = stock;
+
+            // Médicaments en alerte de stock
+            const alertes = medicaments.filter(m => m.quantiteStock <= m.seuilAlerte).length;
+            alertesStockElement.textContent = alertes;
+        }
+
+        // Appliquer les filtres et le tri
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const formeFilter = filterForme.value;
+            const classeFilter = filterClasse.value;
+
+            let filteredMedicaments = medicamentsData.filter(medicament => {
+                const matchesSearch =
+                    medicament.id.toString().includes(searchTerm) ||
+                    medicament.codeBarre.toLowerCase().includes(searchTerm) ||
+                    medicament.nom.toLowerCase().includes(searchTerm) ||
+                    medicament.dci.toLowerCase().includes(searchTerm) ||
+                    medicament.dosage.toLowerCase().includes(searchTerm);
+
+                const matchesForme = !formeFilter || medicament.formeGalenique === formeFilter;
+                const matchesClasse = !classeFilter || medicament.classeTherapeutique.includes(classeFilter);
+
+                return matchesSearch && matchesForme && matchesClasse;
+            });
+
+            // Tri des données
+            filteredMedicaments.sort((a, b) => {
+                let valA = a[currentSort.column];
+                let valB = b[currentSort.column];
+
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderTable(filteredMedicaments);
+        }
+
+        // Afficher les données dans le tableau
+        function renderTable(medicaments) {
+            medicamentsTableBody.innerHTML = '';
+
+            medicaments.forEach(medicament => {
+                const row = document.createElement('tr');
+                const isStockLow = medicament.quantiteStock <= medicament.seuilAlerte;
+                const isExpired = new Date(medicament.datePeremption) < new Date();
+
+                row.innerHTML = `
+                <td>${medicament.id}</td>
+                <td>${medicament.codeBarre}</td>
+                <td>${medicament.nom}</td>
+                <td>${medicament.dci}</td>
+                <td>${medicament.dosage}</td>
+                <td>${medicament.formeGalenique}</td>
+                <td>
+                    <span class="${isStockLow ? 'text-danger fw-bold' : ''}">
+                        ${medicament.quantiteStock}
+                    </span>
+                    ${isStockLow ? '<i class="bi bi-exclamation-triangle text-danger"></i>' : ''}
+                </td>
+                <td>${medicament.prixVente.toFixed(2)} €</td>
+                <td>
+                    <button class="btn btn-sm btn-warning edit-btn me-1" data-id="${medicament.id}">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${medicament.id}">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </td>
+            `;
+
+                if (isExpired) {
+                    row.classList.add('table-danger');
+                } else if (isStockLow) {
+                    row.classList.add('table-warning');
+                }
+
+                medicamentsTableBody.appendChild(row);
+            });
+
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const medicamentId = this.getAttribute('data-id');
+                    editMedicament(medicamentId);
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const medicamentId = this.getAttribute('data-id');
+                    deleteMedicament(medicamentId);
+                });
+            });
+        }
+
+        // Fonction pour éditer un médicament
+        function editMedicament(id) {
+            fetch(`/api/medicaments/${id}`)
+                .then(response => response.json())
+                .then(medicament => {
+                    document.getElementById('medicamentId').value = medicament.id;
+                    document.getElementById('codeBarreInput').value = medicament.codeBarre;
+                    document.getElementById('nomInput').value = medicament.nom;
+                    document.getElementById('dciInput').value = medicament.dci;
+                    document.getElementById('dosageInput').value = medicament.dosage;
+                    document.getElementById('formeInput').value = medicament.formeGalenique;
+                    document.getElementById('classeInput').value = medicament.classeTherapeutique;
+                    document.getElementById('laboratoireInput').value = medicament.laboratoire;
+                    document.getElementById('prixAchatInput').value = medicament.prixAchat;
+                    document.getElementById('prixVenteInput').value = medicament.prixVente;
+                    document.getElementById('tauxRemboursementInput').value = medicament.tauxRemboursement;
+                    document.getElementById('quantiteStockInput').value = medicament.quantiteStock;
+                    document.getElementById('seuilAlerteInput').value = medicament.seuilAlerte;
+                    document.getElementById('datePeremptionInput').value = medicament.datePeremption;
+                    document.getElementById('prescriptionInput').value = medicament.prescriptionRequise ? 'true' : 'false';
+
+                    document.getElementById('modalTitle').textContent = 'Modifier Médicament';
+                    addMedicamentModal.show();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Fonction pour supprimer un médicament
+        function deleteMedicament(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?')) {
+                fetch(`/api/medicaments/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            fetchMedicaments();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Fonction pour exporter les données
+        function exportData() {
+            const data = medicamentsData.map(medicament => ({
+                ID: medicament.id,
+                'Code Barre': medicament.codeBarre,
+                'Nom': medicament.nom,
+                'DCI': medicament.dci,
+                'Dosage': medicament.dosage,
+                'Forme Galénique': medicament.formeGalenique,
+                'Classe Thérapeutique': medicament.classeTherapeutique,
+                'Laboratoire': medicament.laboratoire,
+                'Prix Achat': medicament.prixAchat,
+                'Prix Vente': medicament.prixVente,
+                'Taux Remboursement': medicament.tauxRemboursement,
+                'Quantité Stock': medicament.quantiteStock,
+                'Seuil Alerte': medicament.seuilAlerte,
+                'Date Péremption': medicament.datePeremption,
+                'Prescription Requise': medicament.prescriptionRequise ? 'Oui' : 'Non'
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Médicaments");
+            XLSX.writeFile(wb, "export_medicaments.xlsx");
+        }
+
+        // Fonction pour importer des données
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Veuillez sélectionner un fichier');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                // Transformer les données pour correspondre à notre modèle
+                const medicamentsToImport = jsonData.map(item => ({
+                    codeBarre: item['Code Barre'],
+                    nom: item['Nom'],
+                    dci: item['DCI'],
+                    dosage: item['Dosage'],
+                    formeGalenique: item['Forme Galénique'],
+                    classeTherapeutique: item['Classe Thérapeutique'],
+                    laboratoire: item['Laboratoire'],
+                    prixAchat: item['Prix Achat'],
+                    prixVente: item['Prix Vente'],
+                    tauxRemboursement: item['Taux Remboursement'],
+                    quantiteStock: item['Quantité Stock'],
+                    seuilAlerte: item['Seuil Alerte'],
+                    datePeremption: item['Date Péremption'],
+                    prescriptionRequise: item['Prescription Requise'] === 'Oui'
+                }));
+
+                // Envoyer les données au serveur
+                fetch('/api/medicaments/import', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(medicamentsToImport)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            importModal.hide();
+                            fetchMedicaments();
+                            alert('Importation réussie !');
+                        } else {
+                            throw new Error('Erreur lors de l\'importation');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Erreur lors de l\'importation');
+                    });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    });
+</script>
+</body>
+</html>
