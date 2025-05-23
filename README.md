@@ -204,7 +204,6 @@ src/
 ![ar](https://github.com/user-attachments/assets/a775b461-fd46-4a8c-a132-210713895cfa)
 
 
-
 (https://github.com/user-attachments/assets/356a1883-6f8e-472f-9862-0dcd9ec7cce3)
 
 ## Configuration de la base de données
@@ -232,6 +231,7 @@ Accéder à l'application :
 
 http://localhost:8080/register
 
+```
 
 
 
